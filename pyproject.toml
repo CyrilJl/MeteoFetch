@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "meteofetch"
+version = "0.1.0"
+authors = [{ name = "Cyril Joly" }]
+description = "A package for fetching meteorological modelled data fro MétéoFrance"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["cfgrib", "xarray"]
+
+[project.urls]
+"Homepage" = "https://github.com/CyrilJl/meteofetch"
+
+[tool.ruff]
+line-length = 120
+fix = true
