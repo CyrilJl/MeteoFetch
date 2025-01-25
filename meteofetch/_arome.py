@@ -17,6 +17,11 @@ class Arome:
                 tmp_file.write(response.content)
                 datasets = cfgrib.open_datasets(tmp_file.name)
                 for ds in datasets:
+                    ds = ds.squeeze()
+                    if "time" in ds:
+                        ds = ds.drop_vars("time")
+                    if "step" in ds.dims:
+                        ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
                     ds.load()
         return datasets
 
@@ -29,32 +34,35 @@ class Arome:
             for ds in datasets_group:
                 for field in ds.data_vars:
                     if field != "unknown":
-                        datasets[field].append(ds[field].drop_vars("time"))
-        for field, ds in datasets.items():
-            datasets[field] = xr.concat(ds, dim="step").swap_dims(step="valid_time").rename(valid_time="time")
-        return dict(datasets)
+                        datasets[field].append(ds[field])
+        for field in datasets:
+            datasets[field] = xr.concat(datasets[field], dim="time")
+        return datasets
 
-    def check_paquet(self, paquet):
-        if paquet not in self.paquets_:
-            raise ValueError(f"paquet must be one of {self.paquets_}")
+    @classmethod
+    def check_paquet(cls, paquet):
+        if paquet not in cls.paquets_:
+            raise ValueError(f"paquet must be one of {cls.paquets_}")
 
-    def get_forecast(self, date, paquet="SP1") -> Dict[str, xr.DataArray]:
-        self.check_paquet(paquet)
+    @classmethod
+    def get_forecast(cls, date, paquet="SP1") -> Dict[str, xr.DataArray]:
+        cls.check_paquet(paquet)
         date = pd.to_datetime(str(date)).floor("3h")
-        return self._download_paquet(date=f"{date:%Y-%m-%dT%H}", paquet=paquet)
+        return cls._download_paquet(date=f"{date:%Y-%m-%dT%H}", paquet=paquet)
 
-    def get_latest_forecast(self, paquet="SP1") -> Dict[str, xr.DataArray]:
+    @classmethod
+    def get_latest_forecast(cls, paquet="SP1") -> Dict[str, xr.DataArray]:
         """Get the latest forecast available for a given paquet. Each paquet
         contains different fields.
         Returns:
             Dict[str, xr.DataArray]: A dictionary containing the forecast fields.
         """
-        self.check_paquet(paquet)
+        cls.check_paquet(paquet)
         date = pd.Timestamp.utcnow().floor("3h")
         for _ in range(8):
             date = date - pd.Timedelta(hours=3)
             try:
-                return self.get_forecast(date=date, paquet=paquet)
+                return cls.get_forecast(date=date, paquet=paquet)
             except requests.HTTPError:
                 continue
         raise requests.HTTPError("No forecast found")
@@ -68,7 +76,7 @@ class Arome001(Arome):
 
     Grille EURW1S100 (55,4N 37,5N 12W 16E) - Pas de temps : 1h"""
 
-    groups_ = ("00H06H", "07H12H", "13H18H", "19H24H", "25H30H", "31H36H", "37H42H", "43H48H", "49H51H")
+    groups_ = tuple([f"{h:02d}H" for h in range(52)])
     paquets_ = ("SP1", "SP2", "SP3", "HP1")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome/001/{paquet}/arome__001__{paquet}__{group}__{date}:00:00Z.grib2"
 
