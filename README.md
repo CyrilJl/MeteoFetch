@@ -5,6 +5,12 @@ Les prévisions sont renvoyés sous forme de ``xarray.DataArray``. Le package es
 
 Plus de précisions sur https://meteo.data.gouv.fr/.
 
+## Installation
+
+```console
+pip install meteofetch
+```
+
 ## Usage
 
 ```python
