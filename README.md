@@ -1,8 +1,9 @@
 # MeteoFetch
 
 ``MeteoFetch`` permet de récuopérer les dernières prévisions modèles MétéoFrance Arome 0.025° et 0.01° **sans clé d'API**.
-Les prévisions sont renvoyés sous forme de ``xarray.DataArray``.  Le package est en cours de développement.
+Les prévisions sont renvoyés sous forme de ``xarray.DataArray``. Le package est en cours de développement.
 
+Plus de précisions sur https://meteo.data.gouv.fr/.
 ## Usage
 
 ```python
