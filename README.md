@@ -4,6 +4,7 @@
 Les prévisions sont renvoyés sous forme de ``xarray.DataArray``. Le package est en cours de développement.
 
 Plus de précisions sur https://meteo.data.gouv.fr/.
+
 ## Usage
 
 ```python
