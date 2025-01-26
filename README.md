@@ -1,3 +1,10 @@
+<div align="center">
+  
+![PyPI](https://img.shields.io/pypi/v/meteofetch)
+![pytest](https://github.com/CyrilJl/MeteoFetch/actions/workflows/pytest.yml/badge.svg)
+
+</div>
+
 # MeteoFetch
 
 ``MeteoFetch`` permet de récuopérer les dernières prévisions modèles MétéoFrance Arome 0.025° et 0.01° **sans clé d'API**.
