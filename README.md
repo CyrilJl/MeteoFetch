@@ -1,6 +1,7 @@
 # MeteoFetch
 
-Récupération des prévisions modèles MétéoFrance Arome 0.025° et 0.01° **sans clé d'API**.
+``MeteoFetch`` permet de récuopérer les dernières prévisions modèles MétéoFrance Arome 0.025° et 0.01° **sans clé d'API**.
+Les prévisions sont renvoyés sous forme de ``xarray.DataArray``.  Le package est en cours de développement.
 
 ## Usage
 
@@ -15,12 +16,12 @@ Par défaut, ``meteofetch`` sert à l'utilisateur toutes les variables contenues
 Il est cependant conseillée de préciser les variables voulues pour limiter l'usage mémoire :
 
 ```python
-from meteofetch import Arome0025
+from meteofetch import Arome001
 
-datasets = Arome0025.get_latest_forecast(paquet='SP1', variables=('u10', 'v10'))
+datasets = Arome001.get_latest_forecast(paquet='SP1', variables=('u10', 'v10'))
 datasets['u10']
 
-datasets = Arome0025.get_latest_forecast(paquet='SP2', variables='t')
+datasets = Arome001.get_latest_forecast(paquet='SP2', variables='sp')
 datasets['t']
 ```
 
