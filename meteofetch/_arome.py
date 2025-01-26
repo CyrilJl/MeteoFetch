@@ -9,20 +9,15 @@ import xarray as xr
 
 
 class Arome:
-    @staticmethod
-    def _download_file(url: str) -> List[xr.Dataset]:
+    @classmethod
+    def _download_file(cls, url: str) -> List[xr.Dataset]:
         with requests.get(url=url) as response:
             response.raise_for_status()
             with NamedTemporaryFile(delete=False, suffix=".grib2") as tmp_file:
                 tmp_file.write(response.content)
-                datasets = cfgrib.open_datasets(tmp_file.name)
-                for ds in datasets:
-                    ds = ds.squeeze()
-                    if "time" in ds:
-                        ds = ds.drop_vars("time")
-                    if "step" in ds.dims:
-                        ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
-                    ds.load()
+                datasets = cfgrib.open_datasets(tmp_file.name, indexpath="")
+                for k in range(len(datasets)):
+                    datasets[k] = cls._process_ds(datasets[k]).load()
         return datasets
 
     @classmethod
@@ -36,7 +31,7 @@ class Arome:
                     if field != "unknown":
                         datasets[field].append(ds[field])
         for field in datasets:
-            datasets[field] = xr.concat(datasets[field], dim="time")
+            datasets[field] = xr.concat(datasets[field], dim="time").squeeze()
         return datasets
 
     @classmethod
@@ -59,10 +54,9 @@ class Arome:
         """
         cls.check_paquet(paquet)
         date = pd.Timestamp.utcnow().floor("3h")
-        for _ in range(8):
-            date = date - pd.Timedelta(hours=3)
+        for k in range(8):
             try:
-                return cls.get_forecast(date=date, paquet=paquet)
+                return cls.get_forecast(date=date-pd.Timedelta(hours=3*k), paquet=paquet)
             except requests.HTTPError:
                 continue
         raise requests.HTTPError("No forecast found")
@@ -80,6 +74,11 @@ class Arome001(Arome):
     paquets_ = ("SP1", "SP2", "SP3", "HP1")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome/001/{paquet}/arome__001__{paquet}__{group}__{date}:00:00Z.grib2"
 
+    @staticmethod
+    def _process_ds(ds) -> xr.Dataset:
+        ds = ds.expand_dims("valid_time").drop_vars("time").rename(valid_time="time")
+        return ds
+
 
 class Arome0025(Arome):
     """
@@ -93,3 +92,11 @@ class Arome0025(Arome):
     groups_ = ("00H06H", "07H12H", "13H18H", "19H24H", "25H30H", "31H36H", "37H42H", "43H48H", "49H51H")
     paquets_ = ("SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome/0025/{paquet}/arome__0025__{paquet}__{group}__{date}:00:00Z.grib2"
+
+    @staticmethod
+    def _process_ds(ds) -> xr.Dataset:
+        if "time" in ds:
+            ds = ds.drop_vars("time")
+        if "step" in ds.dims:
+            ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
+        return ds
