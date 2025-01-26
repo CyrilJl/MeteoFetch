@@ -11,6 +11,9 @@ import xarray as xr
 class Arome:
     """Classe de base pour le téléchargement et le traitement des données du modèle AROME."""
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     @classmethod
     def _download_file(cls, url: str) -> List[xr.Dataset]:
         """Télécharge un fichier GRIB à partir d'une URL et le charge en tant que liste de xarray.Dataset.
