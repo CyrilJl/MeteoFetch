@@ -8,7 +8,20 @@ Récupération des prévisions modèles MétéoFrance Arome 0.025° et 0.01° **
 from meteofetch import Arome0025
 
 datasets = Arome0025.get_latest_forecast(paquet='SP3')
-datasets['ssr'].isel(time=5).plot(cmap='Spectral_r')
+datasets['ssr']
+```
+
+Par défaut, ``meteofetch`` sert à l'utilisateur toutes les variables contenues dans le paquet requêté.
+Il est cependant conseillée de préciser les variables voulues pour limiter l'usage mémoire :
+
+```python
+from meteofetch import Arome0025
+
+datasets = Arome0025.get_latest_forecast(paquet='SP1', variables=('u10', 'v10'))
+datasets['u10']
+
+datasets = Arome0025.get_latest_forecast(paquet='SP2', variables='t')
+datasets['t']
 ```
 
 ### Nomenclature
