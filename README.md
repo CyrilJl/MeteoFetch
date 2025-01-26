@@ -89,30 +89,30 @@ Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.025° :
 |        | strc        | Surface net long-wave (thermal) radiation, clear sky                        | (time, latitude, longitude)              | (51, 717, 1121)     |
 |        | iews        | Instantaneous eastward turbulent surface stress                             | (time, latitude, longitude)              | (51, 717, 1121)     |
 |        | inss        | Instantaneous northward turbulent surface stress                            | (time, latitude, longitude)              | (51, 717, 1121)     |
-| IP1    | z           | Geopotential                                                                | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | t           | Temperature                                                                 | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | u           | U component of wind                                                         | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | v           | V component of wind                                                         | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | r           | Relative humidity                                                           | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-| IP2    | crwc        | Specific rain water content                                                 | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | cswc        | Specific snow water content                                                 | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | clwc        | Specific cloud liquid water content                                         | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | ciwc        | Specific cloud ice water content                                            | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | cc          | Fraction of cloud cover                                                     | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-| IP3    | ws          | Wind speed                                                                  | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | pv          | Potential vorticity                                                         | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | q           | Specific humidity                                                           | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | w           | Vertical velocity                                                           | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | dpt         | Dew point temperature                                                       | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | wdir        | Wind direction                                                              | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-|        | wz          | Geometric vertical velocity                                                 | (time, 'isobaricInhPa', latitude, longitude) | (52, 24, 717, 1121) |
-| IP4    | tke         | Turbulent kinetic energy                                                    | (time, 'isobaricInhPa', latitude, longitude) | (51, 24, 717, 1121) |
-| IP5    | vo          | Vorticity (relative)                                                        | (time, 'isobaricInhPa', latitude, longitude) | (52, 5, 717, 1121)  |
-|        | absv        | Absolute vorticity                                                          | (time, 'isobaricInhPa', latitude, longitude) | (52, 5, 717, 1121)  |
-|        | papt        | Pseudo-adiabatic potential temperature                                      | (time, 'isobaricInhPa', latitude, longitude) | (52, 20, 717, 1121) |
-|        | z           | Geopotential                                                                | (time, 'potentialVorticity', latitude, longitude) | (52, 2, 717, 1121)  |
-|        | u           | U component of wind                                                         | (time, 'potentialVorticity', latitude, longitude) | (52, 2, 717, 1121)  |
-|        | v           | V component of wind                                                         | (time, 'potentialVorticity', latitude, longitude) | (52, 2, 717, 1121)  |
+| IP1    | z           | Geopotential                                                                | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | t           | Temperature                                                                 | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | u           | U component of wind                                                         | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | v           | V component of wind                                                         | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | r           | Relative humidity                                                           | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+| IP2    | crwc        | Specific rain water content                                                 | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | cswc        | Specific snow water content                                                 | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | clwc        | Specific cloud liquid water content                                         | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | ciwc        | Specific cloud ice water content                                            | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | cc          | Fraction of cloud cover                                                     | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+| IP3    | ws          | Wind speed                                                                  | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | pv          | Potential vorticity                                                         | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | q           | Specific humidity                                                           | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | w           | Vertical velocity                                                           | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | dpt         | Dew point temperature                                                       | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | wdir        | Wind direction                                                              | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+|        | wz          | Geometric vertical velocity                                                 | (time, isobaricInhPa, latitude, longitude) | (52, 24, 717, 1121) |
+| IP4    | tke         | Turbulent kinetic energy                                                    | (time, isobaricInhPa, latitude, longitude) | (51, 24, 717, 1121) |
+| IP5    | vo          | Vorticity (relative)                                                        | (time, isobaricInhPa, latitude, longitude) | (52, 5, 717, 1121)  |
+|        | absv        | Absolute vorticity                                                          | (time, isobaricInhPa, latitude, longitude) | (52, 5, 717, 1121)  |
+|        | papt        | Pseudo-adiabatic potential temperature                                      | (time, isobaricInhPa, latitude, longitude) | (52, 20, 717, 1121) |
+|        | z           | Geopotential                                                                | (time, potentialVorticity, latitude, longitude) | (52, 2, 717, 1121)  |
+|        | u           | U component of wind                                                         | (time, potentialVorticity, latitude, longitude) | (52, 2, 717, 1121)  |
+|        | v           | V component of wind                                                         | (time, potentialVorticity, latitude, longitude) | (52, 2, 717, 1121)  |
 | HP1    | ws          | Wind speed                                                                  | (time, heightAboveGround, latitude, longitude) | (52, 22, 717, 1121) |
 |        | u           | U component of wind                                                         | (time, heightAboveGround, latitude, longitude) | (52, 22, 717, 1121) |
 |        | v           | V component of wind                                                         | (time, heightAboveGround, latitude, longitude) | (52, 22, 717, 1121) |
