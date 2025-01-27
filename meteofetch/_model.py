@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
+
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
@@ -103,7 +104,11 @@ class Model:
         date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
         for k in range(8):
             try:
-                return cls.get_forecast(date=date - pd.Timedelta(hours=cls.freq_update * k), paquet=paquet, variables=variables)
+                return cls.get_forecast(
+                    date=date - pd.Timedelta(hours=cls.freq_update * k),
+                    paquet=paquet,
+                    variables=variables,
+                )
             except requests.HTTPError:
                 continue
         raise requests.HTTPError("No forecast found")

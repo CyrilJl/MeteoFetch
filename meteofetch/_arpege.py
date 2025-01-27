@@ -13,7 +13,17 @@ class Arpege01(Model):
     Grille EURAT01 (72N 20N 32W 42E) - Pas de temps : 1h puis 3h
     """
 
-    groups_ = ('000H012H', '013H024H', '025H036H', '037H048H', '049H060H', '061H072H', '073H084H', '085H096H', '097H102H')
+    groups_ = (
+        "000H012H",
+        "013H024H",
+        "025H036H",
+        "037H048H",
+        "049H060H",
+        "061H072H",
+        "073H084H",
+        "085H096H",
+        "097H102H",
+    )
     paquets_ = ("SP1", "SP2", "IP1", "IP2", "IP3", "IP4", "HP1", "HP2")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/01/{paquet}/arpege__01__{paquet}__{group}__{date}:00:00Z.grib2"
     freq_update = 6
@@ -25,7 +35,8 @@ class Arpege01(Model):
         if "step" in ds.dims:
             ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
         return ds
-    
+
+
 class Arpege025(Model):
     """Classe pour le modèle ARPEGE à résolution 0.25 degré.
 
@@ -36,7 +47,7 @@ class Arpege025(Model):
     Grille GLOB025 (53N 38N 8W 12E) - Pas de temps : 1h puis 3h
     """
 
-    groups_ = ('00H24H', '025H048H', '049H072H', '073H102H')
+    groups_ = ("00H24H", "025H048H", "049H072H", "073H102H")
     paquets_ = ("SP1", "SP2", "IP1", "IP2", "IP3", "IP4", "HP1", "HP2")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2"
     freq_update = 6

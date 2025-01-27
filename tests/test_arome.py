@@ -18,6 +18,7 @@ def test_Arome0025():
         assert datasets[field].time.size > 0
         assert datasets[field].isnull().mean() < 1
 
+
 def test_Arpege01():
     model = Arpege01()
     datasets = model.get_latest_forecast(paquet="SP1")
@@ -28,7 +29,7 @@ def test_Arpege01():
 
 
 def test_Arpege025():
-    model = Arome001()
+    model = Arpege025()
     datasets = model.get_latest_forecast(paquet="SP1", variables=("u10", "v10"))
     assert len(datasets) > 0
     for field in datasets:
