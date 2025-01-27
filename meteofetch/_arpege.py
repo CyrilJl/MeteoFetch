@@ -47,7 +47,7 @@ class Arpege025(Model):
     Grille GLOB025 (53N 38N 8W 12E) - Pas de temps : 1h puis 3h
     """
 
-    groups_ = ("00H24H", "025H048H", "049H072H", "073H102H")
+    groups_ = ("000H024H", "025H048H", "049H072H", "073H102H")
     paquets_ = ("SP1", "SP2", "IP1", "IP2", "IP3", "IP4", "HP1", "HP2")
     url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2"
     freq_update = 6
