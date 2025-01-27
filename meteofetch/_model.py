@@ -62,6 +62,7 @@ class Model:
 
         for field in datasets:
             datasets[field] = xr.concat(datasets[field], dim="time").squeeze()
+            ds["longitude"] = xr.where(ds["longitude"] <= 180.0, ds["longitude"], ds["longitude"] - 360.0)
         return datasets
 
     @classmethod
