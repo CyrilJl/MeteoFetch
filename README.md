@@ -1,7 +1,7 @@
 <div align="center">
   
-![PyPI](https://img.shields.io/pypi/v/meteofetch)
-![pytest](https://github.com/CyrilJl/MeteoFetch/actions/workflows/pytest.yml/badge.svg)
+[![PyPI - Version](https://img.shields.io/pypi/v/meteofetch)](https://pypi.org/project/meteofetch/)
+[![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
 
 # MeteoFetch
 
