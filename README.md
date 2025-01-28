@@ -3,7 +3,9 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/meteofetch)](https://pypi.org/project/meteofetch/)
 [![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
 
-# MeteoFetch
+<p align="center">
+  <img src="https://github.com/CyrilJl/MeteoFetch/blob/main/_static/logo.svg" alt="Logo" width="250"/>
+</p>
 
 </div>
 
