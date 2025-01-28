@@ -45,20 +45,21 @@ datasets['t']
 Vous pouvez ensuite utiliser les méthodes usuelles proposées par ``xarray`` pour traiter les ``DataArray`` :
 
 ```python
-from meteofetch import Arpege01
 import xarray as xr
 import matplotlib.pyplot as plt
+from meteofetch import Arpege01
 
-dim = 'points'
-coords = ['Paris', 'Edimbourg']
+dim = "points"
+coords = ["Paris", "Edimbourg"]
 x = xr.DataArray([2.33, -3.18], dims=dim)
 y = xr.DataArray([48.9, 55.95], dims=dim)
 
-datasets = Arpege01.get_latest_forecast(paquet='SP1', variables='t2m')
+datasets = Arpege01.get_latest_forecast(paquet="SP1", variables="t2m")
 
 plt.figure(figsize=(8, 3))
-datasets['t2m'].sel(longitude=x, latitude=y, method='nearest').assign_coords({dim: coords}).plot.line(x='time')
-plt.show()
+datasets["t2m"].sel(longitude=x, latitude=y, method="nearest").assign_coords(
+    {dim: coords}
+).plot.line(x="time")
 ```
 
 ![output_code_1](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/time_series.png)
