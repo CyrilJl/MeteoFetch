@@ -42,6 +42,39 @@ datasets = Arome001.get_latest_forecast(paquet='SP2', variables='sp')
 datasets['t']
 ```
 
+Vous pouvez ensuite utiliser les méthodes usuelles proposées par ``xarray`` pour traiter les ``DataArray`` :
+
+```python
+from meteofetch import Arpege01
+import xarray as xr
+import matplotlib.pyplot as plt
+
+dim = 'points'
+coords = ['Paris', 'Edimbourg']
+x = xr.DataArray([2.33, -3.18], dims=dim)
+y = xr.DataArray([48.9, 55.95], dims=dim)
+
+datasets = Arpege01.get_latest_forecast(paquet='SP1', variables='t2m')
+
+plt.figure(figsize=(8, 3))
+datasets['t2m'].sel(longitude=x, latitude=y, method='nearest').assign_coords({dim: coords}).plot.line(x='time')
+plt.show()
+```
+
+![output_code_1](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/time_series.png)
+
+Ou encore :
+
+```python
+from meteofetch import Arome001
+
+datasets = Arome001.get_latest_forecast(paquet='SP3', variables='h')
+
+datasets['h'].plot(cmap='Spectral_r', vmin=0, vmax=3000)
+```
+
+![output_code_2](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/plot_map.png)
+
 ### Nomenclature
 
 ### Arome 0.01°
