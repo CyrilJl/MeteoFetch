@@ -82,7 +82,9 @@ Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpe
 
 ### Arome 0.01°
 
-Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.01° :
+<details>
+<summary>Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.01° :</summary>
+
 
 | Paquet | Champ | Description | Dimensions | Shape d'un run complet|
 |--------|-------|-------------|------------|-------|
@@ -114,9 +116,12 @@ Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.01° :
 |        | v100  | 100 metre V wind component | (time, lat, lon) | (52, 1791, 2801) |
 |        | si100 | 100 metre wind speed | (time, lat, lon) | (52, 1791, 2801) |
 
+</details>
+
 ### Arome 0.025°
 
-Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.025° :
+<details>
+<summary>Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.025° :</summary>
 
 | Paquet | Champ       | Description                                                                 | Dimensions                                      | Shape d'un run complet              |
 |--------|-------------|-----------------------------------------------------------------------------|------------------------------------------------|---------------------|
@@ -207,9 +212,12 @@ Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.025° :
 |        | dpt         | Dew point temperature                                                       | (time, heightAboveGround, lat, lon) | (52, 25, 717, 1121) |
 |        | tke         | Turbulent kinetic energy                                                    | (time, heightAboveGround, lat, lon) | (51, 25, 717, 1121) |
 
+</details>
+
 ### Arpege 0.25°
 
-Résumé des champs contenus dans chaque paquet requêtable pour Arpege 0.25° :
+<details>
+<summary>Résumé des champs contenus dans chaque paquet requêtable pour Arpege 0.25° :</summary>
 
 | Paquet | Champ | Description | Dimensions | Shape |
 |---------|--------|-------------|------------|---------|
@@ -286,3 +294,5 @@ Résumé des champs contenus dans chaque paquet requêtable pour Arpege 0.25° :
 |     | cc | Fraction of cloud cover | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
 |     | dpt | Dew point temperature | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
 |     | tke | Turbulent kinetic energy | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+
+</details>
