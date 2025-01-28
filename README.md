@@ -14,13 +14,13 @@ Les prévisions sont renvoyés sous forme de ``xarray.DataArray``. Le package es
 
 Plus de précisions sur <https://meteo.data.gouv.fr>.
 
-## Installation
+# Installation
 
 ```console
 pip install meteofetch
 ```
 
-## Usage
+# Usage
 
 ```python
 from meteofetch import Arome0025
@@ -57,7 +57,7 @@ y = xr.DataArray([48.9, 55.95], dims=dim)
 datasets = Arpege01.get_latest_forecast(paquet="SP1", variables="t2m")
 
 plt.figure(figsize=(8, 3))
-datasets["t2m"].sel(longitude=x, latitude=y, method="nearest").assign_coords(
+datasets["t2m"].sel(lon=x, lat=y, method="nearest").assign_coords(
     {dim: coords}
 ).plot.line(x="time")
 ```
@@ -76,7 +76,9 @@ datasets['h'].plot(cmap='Spectral_r', vmin=0, vmax=3000)
 
 ![output_code_2](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/plot_map.png)
 
-### Nomenclature
+## Nomenclature
+
+Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpege 0.1°, Arome 0.025° et Arome 0.01°) sont à aires limitées. Arpege 0.1° couvre l'Europe, tandis que les deux modèles Arome couvrent la France, mais avec des résolutions différentes.
 
 ### Arome 0.01°
 
@@ -204,3 +206,83 @@ Résumé des champs contenus dans chaque paquet requêtable pour Arome 0.025° :
 |        | cc          | Fraction of cloud cover                                                     | (time, heightAboveGround, lat, lon) | (52, 25, 717, 1121) |
 |        | dpt         | Dew point temperature                                                       | (time, heightAboveGround, lat, lon) | (52, 25, 717, 1121) |
 |        | tke         | Turbulent kinetic energy                                                    | (time, heightAboveGround, lat, lon) | (51, 25, 717, 1121) |
+
+### Arpege 0.25°
+
+Résumé des champs contenus dans chaque paquet requêtable pour Arpege 0.25° :
+
+| Paquet | Champ | Description | Dimensions | Shape |
+|---------|--------|-------------|------------|---------|
+| SP1 | fg10 | Maximum 10 metre wind gust since previous post-processing | (time, lat, lon) | (102, 721, 1440) |
+|     | efg10 | 10 metre eastward wind gust since previous post-processing | (time, lat, lon) | (102, 721, 1440) |
+|     | nfg10 | 10 metre northward wind gust since previous post-processing | (time, lat, lon) | (102, 721, 1440) |
+|     | u10 | 10 metre U wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | v10 | 10 metre V wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | si10 | 10 metre wind speed | (time, lat, lon) | (103, 721, 1440) |
+|     | wdir10 | 10 metre wind direction | (time, lat, lon) | (103, 721, 1440) |
+|     | t2m | 2 metre temperature | (time, lat, lon) | (103, 721, 1440) |
+|     | r2 | 2 metre relative humidity | (time, lat, lon) | (103, 721, 1440) |
+|     | prmsl | Pressure reduced to MSL | (time, lat, lon) | (103, 721, 1440) |
+|     | ssrd | Surface short-wave (solar) radiation downwards | (time, lat, lon) | (102, 721, 1440) |
+|     | tp | Total Precipitation | (time, lat, lon) | (102, 721, 1440) |
+|     | tsnowp | Total snow precipitation | (time, lat, lon) | (102, 721, 1440) |
+| SP2 | d2m | 2 metre dewpoint temperature | (time, lat, lon) | (103, 721, 1440) |
+|     | sh2 | 2 metre specific humidity | (time, lat, lon) | (103, 721, 1440) |
+|     | mx2t | Maximum temperature at 2 metres since previous post-processing | (time, lat, lon) | (102, 721, 1440) |
+|     | mn2t | Minimum temperature at 2 metres since previous post-processing | (time, lat, lon) | (102, 721, 1440) |
+|     | t | Temperature | (time, lat, lon) | (103, 721, 1440) |
+|     | sp | Surface pressure | (time, lat, lon) | (103, 721, 1440) |
+|     | blh | Boundary layer height | (time, lat, lon) | (103, 721, 1440) |
+|     | lcc | Low cloud cover | (time, lat, lon) | (103, 721, 1440) |
+|     | mcc | Medium cloud cover | (time, lat, lon) | (103, 721, 1440) |
+|     | hcc | High cloud cover | (time, lat, lon) | (103, 721, 1440) |
+|     | sshf | Time-integrated surface sensible heat net flux | (time, lat, lon) | (102, 721, 1440) |
+|     | slhf | Time-integrated surface latent heat net flux | (time, lat, lon) | (102, 721, 1440) |
+|     | strd | Surface long-wave (thermal) radiation downwards | (time, lat, lon) | (102, 721, 1440) |
+|     | ssr | Surface net short-wave (solar) radiation | (time, lat, lon) | (102, 721, 1440) |
+|     | str | Surface net long-wave (thermal) radiation | (time, lat, lon) | (102, 721, 1440) |
+|     | iews | Instantaneous eastward turbulent surface stress | (time, lat, lon) | (102, 721, 1440) |
+|     | inss | Instantaneous northward turbulent surface stress | (time, lat, lon) | (102, 721, 1440) |
+|     | h | Geometrical height | (lat, lon) | (721, 1440) |
+|     | CAPE_INS | Convective Available Potential Energy instantaneous | (time, lat, lon) | (103, 721, 1440) |
+| IP1 | z | Geopotential | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | t | Temperature | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | u | U component of wind | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | v | V component of wind | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | r | Relative humidity | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+| IP2 | ws | Wind speed | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | q | Specific humidity | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | w | Vertical velocity | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | dpt | Dew point temperature | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+|     | wdir | Wind direction | (time, isobaricInhPa, lat, lon) | (103, 34, 721, 1440) |
+| IP3 | clwc | Specific cloud liquid water content | (time, isobaricInhPa, lat, lon) | (103, 24, 721, 1440) |
+|     | ciwc | Specific cloud ice water content | (time, isobaricInhPa, lat, lon) | (103, 24, 721, 1440) |
+|     | cc | Fraction of cloud cover | (time, isobaricInhPa, lat, lon) | (103, 24, 721, 1440) |
+|     | tke | Turbulent kinetic energy | (time, isobaricInhPa, lat, lon) | (103, 24, 721, 1440) |
+| IP4 | pv | Potential vorticity | (time, isobaricInhPa, lat, lon) | (103, 26, 721, 1440) |
+|     | vo | Vorticity (relative) | (time, isobaricInhPa, lat, lon) | (103, 26, 721, 1440) |
+|     | absv | Absolute vorticity | (time, isobaricInhPa, lat, lon) | (103, 26, 721, 1440) |
+|     | papt | Pseudo-adiabatic potential temperature | (time, isobaricInhPa, lat, lon) | (103, 20, 721, 1440) |
+|     | z | Geopotential | (time, potentialVorticity, lat, lon) | (103, 3, 721, 1440) |
+|     | u | U component of wind | (time, potentialVorticity, lat, lon) | (103, 3, 721, 1440) |
+|     | v | V component of wind | (time, potentialVorticity, lat, lon) | (103, 3, 721, 1440) |
+| HP1 | ws | Wind speed | (time, heightAboveGround, lat, lon) | (103, 22, 721, 1440) |
+|     | u | U component of wind | (time, heightAboveGround, lat, lon) | (103, 22, 721, 1440) |
+|     | v | V component of wind | (time, heightAboveGround, lat, lon) | (103, 22, 721, 1440) |
+|     | pres | Pressure | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | t | Temperature | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | r | Relative humidity | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | wdir | Wind direction | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | u200 | 200 metre U wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | v200 | 200 metre V wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | si200 | 200 metre wind speed | (time, lat, lon) | (103, 721, 1440) |
+|     | u100 | 100 metre U wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | v100 | 100 metre V wind component | (time, lat, lon) | (103, 721, 1440) |
+|     | si100 | 100 metre wind speed | (time, lat, lon) | (103, 721, 1440) |
+| HP2 | z | Geopotential | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | q | Specific humidity | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | clwc | Specific cloud liquid water content | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | ciwc | Specific cloud ice water content | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | cc | Fraction of cloud cover | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | dpt | Dew point temperature | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
+|     | tke | Turbulent kinetic energy | (time, heightAboveGround, lat, lon) | (103, 24, 721, 1440) |
