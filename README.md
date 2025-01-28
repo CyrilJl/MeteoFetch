@@ -4,7 +4,7 @@
 [![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
 
   <a href="https://github.com/CyrilJl/meteofetch">
-    <img src="https://github.com/CyrilJl/MeteoFetch/blob/main/_static/logo.svg" alt="Logo" width="200"/>
+    <img src="https://github.com/CyrilJl/MeteoFetch/blob/main/_static/logo.svg" alt="Logo" width="250"/>
   </a>
 
 </div>
