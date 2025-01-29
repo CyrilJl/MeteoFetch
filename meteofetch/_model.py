@@ -1,4 +1,5 @@
-from tempfile import NamedTemporaryFile
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Dict, List
 
 import cfgrib
@@ -18,18 +19,18 @@ class Model:
     @classmethod
     def _download_file(cls, url: str) -> List[xr.Dataset]:
         """Télécharge un fichier GRIB à partir d'une URL et le charge en tant que liste de xarray.Dataset.
-
         Args:
             url (str): L'URL du fichier GRIB à télécharger.
-
         Returns:
             List[xr.Dataset]: Une liste de datasets xarray contenant les données du fichier GRIB.
         """
         with requests.get(url=url) as response:
             response.raise_for_status()
-            with NamedTemporaryFile(delete=False, suffix=".grib2") as tmp_file:
-                tmp_file.write(response.content)
-                datasets = cfgrib.open_datasets(tmp_file.name, indexpath="")
+            with TemporaryDirectory() as tmp_dir:
+                file_path = Path(tmp_dir) / "data.grib2"
+                with open(file_path, "wb") as f:
+                    f.write(response.content)
+                datasets = cfgrib.open_datasets(file_path, indexpath="")
                 for k in range(len(datasets)):
                     datasets[k] = cls._process_ds(datasets[k]).load()
         return datasets
