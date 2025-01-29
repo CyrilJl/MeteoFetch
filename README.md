@@ -4,7 +4,7 @@
 [![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
 
   <a href="https://github.com/CyrilJl/meteofetch">
-    <img src="https://github.com/CyrilJl/MeteoFetch/blob/main/_static/logo.svg" alt="Logo" width="250"/>
+    <img src="https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/logo.svg" alt="Logo" width="250"/>
   </a>
 
 </div>
@@ -62,7 +62,7 @@ datasets["t2m"].sel(lon=x, lat=y, method="nearest").assign_coords(
 ).plot.line(x="time")
 ```
 
-![output_code_1](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/time_series.png)
+![output_code_1](https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/time_series.png)
 
 Ou encore :
 
@@ -74,7 +74,7 @@ datasets = Arome001.get_latest_forecast(paquet='SP3', variables='h')
 datasets['h'].plot(cmap='Spectral_r', vmin=0, vmax=3000)
 ```
 
-![output_code_2](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/plot_map.png)
+![output_code_2](https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/plot_map.png)
 
 Les domaines Outre-Mer sont également disponibles :
 
@@ -91,7 +91,7 @@ datasets = AromeOutreMerIndien.get_latest_forecast(paquet="SP1")
 datasets["t2m"].mean(dim="time").plot(cmap="Spectral_r")
 ```
 
-![output_code_3](https://github.com/CyrilJl/MeteoFetch/blob/main/_static/plot_map_indien.png)
+![output_code_3](https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/plot_map_indien.png)
 
 ## Nomenclature
 
