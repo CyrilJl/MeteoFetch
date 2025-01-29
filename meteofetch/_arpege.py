@@ -1,9 +1,7 @@
-import xarray as xr
-
-from ._model import Model
+from ._model import Model, MultiHourProcess
 
 
-class Arpege01(Model):
+class Arpege01(Model, MultiHourProcess):
     """Classe pour le modèle ARPEGE à résolution 0.1 degré.
 
     Regroupement de différents paramètres du modèle français de prévision atmosphérique global Arpège, répartis en plusieurs groupes d’échéances : 00h-12h, 13h-24h, 25h-36h, 37h-48h, 49h-60h, 61h-72h, 73h-84h, 85h-96h et 97h-102h.
@@ -25,19 +23,11 @@ class Arpege01(Model):
         "097H102H",
     )
     paquets_ = ("SP1", "SP2", "IP1", "IP2", "IP3", "IP4", "HP1", "HP2")
-    url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/01/{paquet}/arpege__01__{paquet}__{group}__{date}:00:00Z.grib2"
+    url_ = "{date}:00:00Z/arpege/01/{paquet}/arpege__01__{paquet}__{group}__{date}:00:00Z.grib2"
     freq_update = 6
 
-    @staticmethod
-    def _process_ds(ds) -> xr.Dataset:
-        if "time" in ds:
-            ds = ds.drop_vars("time")
-        if "step" in ds.dims:
-            ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
-        return ds
 
-
-class Arpege025(Model):
+class Arpege025(Model, MultiHourProcess):
     """Classe pour le modèle ARPEGE à résolution 0.25 degré.
 
     Regroupement de différents paramètres du modèle français de prévision atmosphérique global Arpège, répartis en 4 groupes d'échéances : 00h-24h, 25h-48h, 49h-72h et 73h-102h.
@@ -49,13 +39,5 @@ class Arpege025(Model):
 
     groups_ = ("000H024H", "025H048H", "049H072H", "073H102H")
     paquets_ = ("SP1", "SP2", "IP1", "IP2", "IP3", "IP4", "HP1", "HP2")
-    url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2"
+    url_ = "{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2"
     freq_update = 6
-
-    @staticmethod
-    def _process_ds(ds) -> xr.Dataset:
-        if "time" in ds:
-            ds = ds.drop_vars("time")
-        if "step" in ds.dims:
-            ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
-        return ds

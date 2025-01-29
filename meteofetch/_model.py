@@ -10,6 +10,8 @@ import xarray as xr
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
+    base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
+
     def __repr__(self):
         return f"{self.__class__.__name__}()"
 
@@ -23,6 +25,7 @@ class Model:
         Returns:
             List[xr.Dataset]: Une liste de datasets xarray contenant les données du fichier GRIB.
         """
+        print(url)
         with requests.get(url=url) as response:
             response.raise_for_status()
             with NamedTemporaryFile(delete=False, suffix=".grib2") as tmp_file:
@@ -51,7 +54,7 @@ class Model:
 
         datasets = {}
         for group in cls.groups_:
-            url = cls.url_.format(date=date, paquet=paquet, group=group)
+            url = cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group)
             datasets_group = cls._download_file(url)
             for ds in datasets_group:
                 for field in ds.data_vars:
@@ -118,3 +121,20 @@ class Model:
             except requests.HTTPError:
                 continue
         raise requests.HTTPError("No forecast found")
+
+
+class HourlyProcess:
+    @staticmethod
+    def _process_ds(ds) -> xr.Dataset:
+        ds = ds.expand_dims("valid_time").drop_vars("time").rename(valid_time="time")
+        return ds
+
+
+class MultiHourProcess:
+    @staticmethod
+    def _process_ds(ds) -> xr.Dataset:
+        if "time" in ds:
+            ds = ds.drop_vars("time")
+        if "step" in ds.dims:
+            ds = ds.swap_dims(step="valid_time").rename(valid_time="time")
+        return ds
