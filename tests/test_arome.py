@@ -1,4 +1,14 @@
-from meteofetch import Arome001, Arome0025, AromeOutreMerIndien, Arpege01, Arpege025
+from meteofetch import (
+    Arome001,
+    Arome0025,
+    AromeOutreMerAntilles,
+    AromeOutreMerGuyane,
+    AromeOutreMerIndien,
+    AromeOutreMerNouvelleCaledonie,
+    AromeOutreMerPolynesie,
+    Arpege01,
+    Arpege025,
+)
 
 
 def test_Arome001():
@@ -37,10 +47,16 @@ def test_Arpege025():
         assert datasets[field].isnull().mean() < 1
 
 
-def test_AromeOutreMerIndien():
-    model = AromeOutreMerIndien()
-    datasets = model.get_latest_forecast(paquet="SP1")
-    assert len(datasets) > 0
-    for field in datasets:
-        assert datasets[field].time.size > 0
-        assert datasets[field].isnull().mean() < 1
+def test_AromeOutreMer():
+    for model in (
+        AromeOutreMerAntilles,
+        AromeOutreMerGuyane,
+        AromeOutreMerIndien,
+        AromeOutreMerNouvelleCaledonie,
+        AromeOutreMerPolynesie,
+    ):
+        datasets = model.get_latest_forecast(paquet="SP1")
+        assert len(datasets) > 0
+        for field in datasets:
+            assert datasets[field].time.size > 0
+            assert datasets[field].isnull().mean() < 1
