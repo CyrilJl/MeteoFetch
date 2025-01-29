@@ -25,7 +25,6 @@ class Model:
         Returns:
             List[xr.Dataset]: Une liste de datasets xarray contenant les données du fichier GRIB.
         """
-        print(url)
         with requests.get(url=url) as response:
             response.raise_for_status()
             with NamedTemporaryFile(delete=False, suffix=".grib2") as tmp_file:
