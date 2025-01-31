@@ -2,6 +2,7 @@
   
 [![PyPI - Version](https://img.shields.io/pypi/v/meteofetch)](https://pypi.org/project/meteofetch/)
 [![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e9c19a5585b94cb884b738fba87073a1)](https://app.codacy.com/gh/CyrilJl/MeteoFetch/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
   <a href="https://github.com/CyrilJl/meteofetch">
     <img src="https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/logo.svg" alt="Logo" width="250"/>
