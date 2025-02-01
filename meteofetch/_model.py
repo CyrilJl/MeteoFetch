@@ -11,6 +11,7 @@ import xarray as xr
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
+    TIMEOUT = 20
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
 
     def __repr__(self):
@@ -24,7 +25,7 @@ class Model:
         Returns:
             List[xr.Dataset]: Une liste de datasets xarray contenant les données du fichier GRIB.
         """
-        with requests.get(url=url) as response:
+        with requests.get(url=url, timeout=cls.TIMEOUT) as response:
             response.raise_for_status()
             with TemporaryDirectory() as tmp_dir:
                 file_path = Path(tmp_dir) / "data.grib2"
