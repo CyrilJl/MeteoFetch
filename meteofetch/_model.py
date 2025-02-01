@@ -30,7 +30,7 @@ class Model:
                 file_path = Path(tmp_dir) / "data.grib2"
                 with open(file_path, "wb") as f:
                     f.write(response.content)
-                datasets = cfgrib.open_datasets(file_path, indexpath="")
+                datasets = cfgrib.open_datasets(path=file_path, indexpath="", decode_timedelta=True)
                 for k in range(len(datasets)):
                     datasets[k] = cls._process_ds(datasets[k]).load()
         return datasets
