@@ -1,6 +1,7 @@
 <div align="center">
   
 [![PyPI - Version](https://img.shields.io/pypi/v/meteofetch)](https://pypi.org/project/meteofetch/)
+[![conda-forge](https://anaconda.org/conda-forge/meteofetch/badges/version.svg)](https://anaconda.org/conda-forge/meteofetch)
 [![Unit tests](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml/badge.svg)](https://github.com/CyrilJl/meteofetch/actions/workflows/pytest.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e9c19a5585b94cb884b738fba87073a1)](https://app.codacy.com/gh/CyrilJl/MeteoFetch/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
@@ -19,6 +20,18 @@ Plus de précisions sur <https://meteo.data.gouv.fr>.
 
 ```console
 pip install meteofetch
+```
+
+Ou :
+
+```console
+conda install -c conda-forge meteofetch
+```
+
+Ou :
+
+```console
+mamba install  meteofetch
 ```
 
 # Usage
