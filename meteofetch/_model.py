@@ -21,7 +21,12 @@ class Model:
     @classmethod
     def geo_encode_cf(cls, da):
         da.encoding.update(
-            {"zlib": True, "complevel": 6, "grid_mapping": "spatial_ref", "coordinates": "latitude longitude"}
+            {
+                "zlib": True,
+                "complevel": 6,
+                "grid_mapping": "spatial_ref",
+                "coordinates": "latitude longitude",
+            }
         )
         da.coords["spatial_ref"] = xr.Variable((), 0)
         da["spatial_ref"].attrs["crs_wkt"] = cls.CRS_WKT
