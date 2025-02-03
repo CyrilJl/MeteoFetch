@@ -7,32 +7,17 @@ import pandas as pd
 import requests
 import xarray as xr
 
+from ._misc import geo_encode_cf
+
 
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
     TIMEOUT = 20
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
-    CRS_WKT = """GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)"],MEMBER["World Geodetic System 1984 (G730)"],MEMBER["World Geodetic System 1984 (G873)"],MEMBER["World Geodetic System 1984 (G1150)"],MEMBER["World Geodetic System 1984 (G1674)"],MEMBER["World Geodetic System 1984 (G1762)"],MEMBER["World Geodetic System 1984 (G2139)"],MEMBER["World Geodetic System 1984 (G2296)"],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[2.0]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["Horizontal component of 3D system."],AREA["World."],BBOX[-90,-180,90,180]],ID["EPSG",4326]]"""
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
-
-    @classmethod
-    def geo_encode_cf(cls, da):
-        da.encoding.update(
-            {
-                "zlib": True,
-                "complevel": 6,
-                "grid_mapping": "spatial_ref",
-                "coordinates": "latitude longitude",
-            }
-        )
-        da.coords["spatial_ref"] = xr.Variable((), 0)
-        da["spatial_ref"].attrs["crs_wkt"] = cls.CRS_WKT
-        da["spatial_ref"].attrs["spatial_ref"] = cls.CRS_WKT
-        da["time"].encoding = {"units": "hours since 1970-01-01 00:00:00"}
-        return da
 
     @classmethod
     def _download_file(cls, url: str) -> List[xr.Dataset]:
@@ -87,9 +72,10 @@ class Model:
                 datasets[field]["longitude"] <= 180.0,
                 datasets[field]["longitude"],
                 datasets[field]["longitude"] - 360.0,
+                keep_attrs=True,
             )
-            datasets[field] = datasets[field].sortby("longitude").sortby("latitude")
-            cls.geo_encode_cf(datasets[field])
+            datasets[field] = datasets[field].sortby("longitude").sortby("latitude").sortby("time")
+            geo_encode_cf(da=datasets[field])
         return datasets
 
     @classmethod
