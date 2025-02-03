@@ -89,6 +89,7 @@ class Model:
                 datasets[field]["longitude"] - 360.0,
             )
             datasets[field] = datasets[field].sortby("longitude").sortby("latitude")
+            cls.geo_encode_cf(datasets[field])
         return datasets
 
     @classmethod
