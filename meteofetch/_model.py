@@ -74,7 +74,9 @@ class Model:
                 datasets[field]["longitude"] - 360.0,
                 keep_attrs=True,
             )
-            datasets[field] = datasets[field].sortby("longitude").sortby("latitude").sortby("time")
+            datasets[field] = datasets[field].sortby("longitude").sortby("latitude")
+            if "time" in datasets[field]:
+                datasets[field] = datasets[field].sortby("time")
             geo_encode_cf(da=datasets[field])
         return datasets
 
