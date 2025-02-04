@@ -18,20 +18,18 @@ Plus de précisions sur <https://meteo.data.gouv.fr>.
 
 # Installation
 
+Le package est disponible sur Pypi :
+
 ```console
 pip install meteofetch
 ```
 
-Ou :
+Le package est également disponible sur conda-forge :
 
 ```console
 conda install -c conda-forge meteofetch
-```
-
-Ou :
-
-```console
-mamba install  meteofetch
+# Ou :
+mamba install meteofetch
 ```
 
 # Usage
