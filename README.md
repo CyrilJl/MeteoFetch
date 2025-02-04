@@ -51,7 +51,7 @@ datasets = Arome001.get_latest_forecast(paquet='SP1', variables=('u10', 'v10'))
 datasets['u10']
 
 datasets = Arome001.get_latest_forecast(paquet='SP2', variables='sp')
-datasets['t']
+datasets['sp']
 ```
 
 Vous pouvez ensuite utiliser les méthodes usuelles proposées par ``xarray`` pour traiter les ``DataArray`` :
