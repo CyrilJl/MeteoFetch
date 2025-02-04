@@ -70,5 +70,6 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     da["spatial_ref"].attrs["crs_wkt"] = CRS_WKT
     da["spatial_ref"].attrs["spatial_ref"] = CRS_WKT
     da["spatial_ref"].attrs["grid_mapping_name"] = "latitude_longitude"
-    da["time"].encoding = {"units": "hours since 1970-01-01 00:00:00"}
+    if "time" in da:
+        da["time"].encoding = {"units": "hours since 1970-01-01 00:00:00"}
     return da
