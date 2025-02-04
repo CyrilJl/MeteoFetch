@@ -12,7 +12,7 @@
 </div>
 
 ``MeteoFetch`` permet de récupérer les dernières prévisions modèles MétéoFrance Arome (0.025°, 0.01°, et les cinq domaines Outre-Mer) et Arpege (0.25° et 0.1°) **sans clé d'API**.
-Les prévisions sont renvoyés sous forme de ``xarray.DataArray`` qui respectent le standard CF.
+Les prévisions sont renvoyés sous forme de ``xarray.DataArray`` qui [respectent le standard CF](https://cfchecker.ncas.ac.uk/) ([Climate and Forecast](https://cfconventions.org/)).
 
 Plus de précisions sur <https://meteo.data.gouv.fr>.
 
