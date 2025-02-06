@@ -16,6 +16,8 @@ Les prévisions sont renvoyés sous forme de ``xarray.DataArray`` qui [respecten
 
 Plus de précisions sur <https://meteo.data.gouv.fr>.
 
+La méthode ``cfgrib.open_datasets`` est actuellement un bottleneck, plus que le temps de téléchargement des fichiers grib, je vais réfléchir à comment contourner ce problème.
+
 # Installation
 
 Le package est disponible sur Pypi :
