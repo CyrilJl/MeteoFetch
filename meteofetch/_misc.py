@@ -2,6 +2,9 @@
 The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import pyproj.
 """
 
+import os
+from contextlib import contextmanager
+
 import xarray as xr
 
 CRS_WKT = """
@@ -73,3 +76,17 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     if "time" in da:
         da["time"].encoding = {"units": "hours since 1970-01-01 00:00:00"}
     return da
+
+
+@contextmanager
+def temporary_env_var(key, value):
+    """Contexte temporaire pour modifier une variable d'environnement."""
+    original_value = os.environ.get(key)
+    os.environ[key] = value
+    try:
+        yield
+    finally:
+        if original_value is not None:
+            os.environ[key] = original_value
+        else:
+            del os.environ[key]
