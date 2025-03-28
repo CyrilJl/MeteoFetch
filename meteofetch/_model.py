@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import geo_encode_cf, temporary_env_var
+from ._misc import geo_encode_cf
 
 
 class Model:
@@ -33,9 +33,7 @@ class Model:
                 file_path = Path(tmp_dir) / "data.grib2"
                 with open(file_path, "wb") as f:
                     f.write(response.content)
-                custom_path = str(Path(__file__).parent / "gribdefs")
-                with temporary_env_var("ECCODES_DEFINITION_PATH", custom_path):
-                    datasets = cfgrib.open_datasets(path=file_path, indexpath="", decode_timedelta=True)
+                datasets = cfgrib.open_datasets(path=file_path, indexpath="", decode_timedelta=True)
                 for k in range(len(datasets)):
                     datasets[k] = cls._process_ds(datasets[k]).load()
         return datasets
@@ -63,7 +61,6 @@ class Model:
             datasets_group = cls._download_file(url)
             for ds in datasets_group:
                 for field in ds.data_vars:
-                    print(field)
                     if (field != "unknown") and ((variables_ is None) or (field in variables_)):
                         if field not in datasets:
                             datasets[field] = []
