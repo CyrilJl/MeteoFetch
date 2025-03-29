@@ -12,7 +12,17 @@ from meteofetch import (
     Arpege025,
 )
 
-for m in (Arome001, Arome0025, AromeOutreMerAntilles, AromeOutreMerGuyane, Arpege01, Arpege025):
+for m in (
+    Arome001,
+    Arome0025,
+    AromeOutreMerAntilles,
+    AromeOutreMerGuyane,
+    AromeOutreMerIndien,
+    AromeOutreMerNouvelleCaledonie,
+    AromeOutreMerPolynesie,
+    Arpege01,
+    Arpege025,
+):
     m.groups_ = m.groups_[:3]  # Limiter le nombre de groupes pour les tests
 
 
