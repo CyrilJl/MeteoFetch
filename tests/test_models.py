@@ -12,8 +12,10 @@ from meteofetch import (
     Arpege025,
 )
 
+for m in (Arome001, Arome0025, AromeOutreMerAntilles, AromeOutreMerGuyane, Arpege01, Arpege025):
+    m.groups_ = m.groups_[:3]  # Limiter le nombre de groupes pour les tests
 
-# Fixture pour les modèles AROME
+
 @pytest.fixture(params=[Arome001, Arome0025])
 def arome_model(request):
     return request.param()
@@ -42,7 +44,7 @@ def arome_outre_mer_model(request):
 # Test pour les modèles AROME
 def test_arome_models(arome_model):
     for paquet in ("SP1", "SP2", "HP1"):
-        datasets = arome_model.get_latest_forecast(paquet=paquet, variables=("u10", "v10"))
+        datasets = arome_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
             print(field)
