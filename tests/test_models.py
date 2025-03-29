@@ -53,7 +53,7 @@ def arome_outre_mer_model(request):
 
 # Test pour les modèles AROME
 def test_arome_models(arome_model):
-    for paquet in ("SP1", "SP2", "HP1"):
+    for paquet in ("SP2", "SP2", "HP1", "IP2"):
         datasets = arome_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
@@ -65,7 +65,7 @@ def test_arome_models(arome_model):
 
 # Test pour les modèles ARPEGE
 def test_arpege_models(arpege_model):
-    for paquet in ("SP1", "SP2"):
+    for paquet in ("HP1", "SP2", "IP2"):
         datasets = arpege_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
@@ -77,7 +77,7 @@ def test_arpege_models(arpege_model):
 
 # Test pour les modèles AROME Outre-Mer
 def test_arome_outre_mer_models(arome_outre_mer_model):
-    for paquet in ("SP1", "SP2"):
+    for paquet in ("HP1", "SP2", "IP1"):
         datasets = arome_outre_mer_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
