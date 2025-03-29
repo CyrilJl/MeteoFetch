@@ -54,37 +54,34 @@ def arome_outre_mer_model(request):
 # Test pour les modèles AROME
 def test_arome_models(arome_model):
     for paquet in arome_model.paquets_:
-        print(paquet)
+        print(f"\n{paquet}")
         datasets = arome_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
-            print(field)
+            print(f"\t{field}")
             assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
             assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
-        print()
 
 
 # Test pour les modèles ARPEGE
 def test_arpege_models(arpege_model):
     for paquet in arpege_model.paquets_:
-        print(paquet)
+        print(f"\n{paquet}")
         datasets = arpege_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
-            print(field)
+            print(f"\t{field}")
             assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
             assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
-        print()
 
 
 # Test pour les modèles AROME Outre-Mer
 def test_arome_outre_mer_models(arome_outre_mer_model):
     for paquet in arome_outre_mer_model.paquets_:
-        print(paquet)
+        print(f"\n{paquet}")
         datasets = arome_outre_mer_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
         for field in datasets:
-            print(field)
+            print(f"\t{field}")
             assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
             assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
-        print()
