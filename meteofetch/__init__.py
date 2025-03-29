@@ -3,6 +3,9 @@ import os
 import sys
 from pathlib import Path
 
+# Définition du chemin vers les définitions de grib
+# Config eccodes pour le module cfgrib
+# Téléchargée depuis https://donneespubliques.meteofrance.fr/donnees_libres/Static/gribdefs_20220126.tar.gz
 os.environ["ECCODES_DEFINITION_PATH"] = str(Path(__file__).parent / "gribdefs")
 
 if "cfgrib" in sys.modules:
