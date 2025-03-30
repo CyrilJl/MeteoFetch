@@ -29,7 +29,7 @@ MODELS = (
 
 # Limiter le nombre de groupes pour tous les modèles
 for m in MODELS:
-    m.groups_ = m.groups_[:3]
+    m.groups_ = m.groups_[:2]
 
 
 # Fixture unique pour tous les modèles
