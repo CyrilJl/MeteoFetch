@@ -61,7 +61,7 @@ class Model:
             datasets_group = cls._download_file(url)
             for ds in datasets_group:
                 for field in ds.data_vars:
-                    if (field != "unknown") and ((variables_ is None) or (field in variables_)):
+                    if (variables_ is None) or (field in variables_):
                         if field not in datasets:
                             datasets[field] = []
                         datasets[field].append(ds[field])
