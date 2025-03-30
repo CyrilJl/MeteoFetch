@@ -13,8 +13,7 @@ from meteofetch import (
     Arpege025,
 )
 
-# Limiter le nombre de groupes pour tous les modèles
-for m in (
+MODELS = (
     Arome001,
     Arome0025,
     AromeOutreMerAntilles,
@@ -24,30 +23,21 @@ for m in (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
-):
+)
+
+# Limiter le nombre de groupes pour tous les modèles
+for m in MODELS:
     m.groups_ = m.groups_[:3]
 
 
 # Fixture unique pour tous les modèles
-@pytest.fixture(
-    params=[
-        Arome001,
-        Arome0025,
-        Arpege01,
-        Arpege025,
-        AromeOutreMerAntilles,
-        AromeOutreMerGuyane,
-        AromeOutreMerIndien,
-        AromeOutreMerNouvelleCaledonie,
-        AromeOutreMerPolynesie,
-    ]
-)
+@pytest.fixture(params=MODELS)
 def model(request):
     return request.param()
 
 
 # Test unique pour tous les modèles
-def test_all_weather_models(model):
+def test_models(model):
     for paquet in model.paquets_:
         print(f"\nModel: {model.__class__.__name__}, Paquet: {paquet}")
         datasets = model.get_latest_forecast(paquet=paquet)
