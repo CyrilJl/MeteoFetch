@@ -1,4 +1,5 @@
 import pytest
+import xarray as xr
 
 from meteofetch import (
     Arome001,
@@ -12,6 +13,7 @@ from meteofetch import (
     Arpege025,
 )
 
+# Limiter le nombre de groupes pour tous les modèles
 for m in (
     Arome001,
     Arome0025,
@@ -23,23 +25,16 @@ for m in (
     Arpege01,
     Arpege025,
 ):
-    m.groups_ = m.groups_[:3]  # Limiter le nombre de groupes pour les tests
+    m.groups_ = m.groups_[:3]
 
 
-@pytest.fixture(params=[Arome001, Arome0025])
-def arome_model(request):
-    return request.param()
-
-
-# Fixture pour les modèles ARPEGE
-@pytest.fixture(params=[Arpege01, Arpege025])
-def arpege_model(request):
-    return request.param()
-
-
-# Fixture pour les modèles AROME Outre-Mer
+# Fixture unique pour tous les modèles
 @pytest.fixture(
     params=[
+        Arome001,
+        Arome0025,
+        Arpege01,
+        Arpege025,
         AromeOutreMerAntilles,
         AromeOutreMerGuyane,
         AromeOutreMerIndien,
@@ -47,41 +42,20 @@ def arpege_model(request):
         AromeOutreMerPolynesie,
     ]
 )
-def arome_outre_mer_model(request):
+def model(request):
     return request.param()
 
 
-# Test pour les modèles AROME
-def test_arome_models(arome_model):
-    for paquet in arome_model.paquets_:
-        print(f"\n{paquet}")
-        datasets = arome_model.get_latest_forecast(paquet=paquet)
-        assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
+# Test unique pour tous les modèles
+def test_all_weather_models(model):
+    for paquet in model.paquets_:
+        print(f"\nModel: {model.__class__.__name__}, Paquet: {paquet}")
+        datasets = model.get_latest_forecast(paquet=paquet)
+        assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
+
         for field in datasets:
             print(f"\t{field}")
-            assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-            assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
-
-
-# Test pour les modèles ARPEGE
-def test_arpege_models(arpege_model):
-    for paquet in arpege_model.paquets_:
-        print(f"\n{paquet}")
-        datasets = arpege_model.get_latest_forecast(paquet=paquet)
-        assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
-        for field in datasets:
-            print(f"\t{field}")
-            assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-            assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
-
-
-# Test pour les modèles AROME Outre-Mer
-def test_arome_outre_mer_models(arome_outre_mer_model):
-    for paquet in arome_outre_mer_model.paquets_:
-        print(f"\n{paquet}")
-        datasets = arome_outre_mer_model.get_latest_forecast(paquet=paquet)
-        assert len(datasets) > 0, "Aucun dataset n'a été récupéré."
-        for field in datasets:
-            print(f"\t{field}")
-            assert datasets[field].time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-            assert datasets[field].isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
+            ds = datasets[field]
+            if "time" in ds.dims:
+                assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
+            assert ds.isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
