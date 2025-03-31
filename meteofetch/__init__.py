@@ -1,18 +1,15 @@
-import importlib
 import os
-import sys
 from pathlib import Path
+
+import eccodes
 
 # Définition du chemin vers les définitions de grib
 # Config eccodes pour le module cfgrib
 # Téléchargée depuis https://donneespubliques.meteofrance.fr/donnees_libres/Static/gribdefs_20220126.tar.gz
 os.environ["ECCODES_DEFINITION_PATH"] = str(Path(__file__).parent / "gribdefs")
-
-# Recharger le module cfgrib et xarray si déjà importé
-# Afin que la redéfinition de la variable d'environnement soit prise en compte
-if "cfgrib" in sys.modules:
-    importlib.reload(sys.modules["cfgrib"])
-    importlib.reload(sys.modules["xarray"])
+# Permet de recharger la librairie binaire eccodes pour que la variable d'environnement
+# soit prise en compte
+eccodes.codes_context_delete()
 
 
 from ._arome import (
