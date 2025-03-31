@@ -1,7 +1,12 @@
 from gc import collect
 
 import pytest
+# Imports a priori non-utiles pour checker
+# si les librairies sont bien rechargées
+# et ECCODES_DEFINITION_PATH est bien prise
+# en compte
 import xarray as xr
+import cfgrib
 
 from meteofetch import (
     Arome001,
