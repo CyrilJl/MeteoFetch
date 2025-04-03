@@ -2,7 +2,13 @@
 The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import pyproj.
 """
 
+import os
+from typing import Literal
+
+import eccodes
 import xarray as xr
+
+sources = Literal["WMO", "MeteoFrance"]
 
 CRS_WKT = """
             GEOGCRS[
@@ -73,3 +79,11 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     if "time" in da:
         da["time"].encoding = {"units": "hours since 1970-01-01 00:00:00"}
     return da
+
+
+def set_grib_defs(source: sources):
+    if source == "WMO":
+        del os.environ["ECCODES_DEFINITION_PATH"]
+    if source == "MeteoFrance":
+        os.environ["ECCODES_DEFINITION_PATH"] = str(eccodes.codes_get_default("definition_path"))
+    eccodes.codes_context_delete()
