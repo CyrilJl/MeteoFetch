@@ -1,10 +1,5 @@
 from gc import collect
-
 import pytest
-# Imports a priori non-utiles pour checker
-# si les librairies sont bien rechargées
-# et ECCODES_DEFINITION_PATH est bien prise
-# en compte
 import xarray as xr
 import cfgrib
 
@@ -20,8 +15,6 @@ from meteofetch import (
     Arpege025,
     set_grib_defs
 )
-
-set_grib_defs('MeteoFrance')
 
 MODELS = (
     Arome001,
@@ -39,22 +32,31 @@ MODELS = (
 for m in MODELS:
     m.groups_ = m.groups_[:2]
 
+# Liste des configurations GRIB à tester
+GRIB_DEFS = ['WMO', 'MeteoFrance']
 
-# Fixture unique pour tous les modèles
+# Fixture pour les modèles
 @pytest.fixture(params=MODELS)
-def model(request):
-    return request.param()
+def model_cls(request):
+    return request.param
 
+# Fixture pour les configurations GRIB
+@pytest.fixture(params=GRIB_DEFS)
+def grib_def(request):
+    return request.param
 
-# Test unique pour tous les modèles
-def test_models(model):
+def test_models_with_grib_defs(model_cls, grib_def):
+    # Configurer les définitions GRIB
+    set_grib_defs(grib_def)
+    print(f"\nTesting {model_cls.__name__} with {grib_def} definitions")
+    
     for paquet in model.paquets_:
-        print(f"\nModel: {model.__class__.__name__}, Paquet: {paquet}")
+        print(f"\nModel: {model.__class__.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
         datasets = model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
 
         for field in datasets:
-            print(f"\t{field}")
+            print(f"\t{field} - units : {datasets[field].units}")
             ds = datasets[field]
             if "time" in ds.dims:
                 assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
