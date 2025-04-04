@@ -37,7 +37,7 @@ GRIB_DEFS = ['WMO', 'MeteoFrance']
 
 # Fixture pour les modèles
 @pytest.fixture(params=MODELS)
-def model_cls(request):
+def model(request):
     return request.param
 
 # Fixture pour les configurations GRIB
@@ -45,7 +45,7 @@ def model_cls(request):
 def grib_def(request):
     return request.param
 
-def test_models_with_grib_defs(model_cls, grib_def):
+def test_models_with_grib_defs(model, grib_def):
     # Configurer les définitions GRIB
     set_grib_defs(grib_def)
     print(f"\nTesting {model_cls.__name__} with {grib_def} definitions")
