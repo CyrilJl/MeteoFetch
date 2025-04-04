@@ -48,7 +48,7 @@ def grib_def(request):
 def test_models_with_grib_defs(model, grib_def):
     # Configurer les définitions GRIB
     set_grib_defs(grib_def)
-    print(f"\nTesting {model_cls.__name__} with {grib_def} definitions")
+    print(f"\nTesting {model.__name__} with {grib_def} definitions")
     
     for paquet in model.paquets_:
         print(f"\nModel: {model.__class__.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
