@@ -56,7 +56,7 @@ def test_models_with_grib_defs(grib_def, model):
         assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
 
         for field in datasets:
-            print(f"\t{field} - units : {datasets[field].units}")
+            print(f"\t{field} - {datasets[field].units}")
             ds = datasets[field]
             if "time" in ds.dims:
                 assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
