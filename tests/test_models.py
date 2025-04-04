@@ -45,7 +45,7 @@ def model(request):
 def grib_def(request):
     return request.param
 
-def test_models_with_grib_defs(model, grib_def):
+def test_models_with_grib_defs(grib_def, model):
     # Configurer les définitions GRIB
     set_grib_defs(grib_def)
     print(f"\nTesting {model.__name__} with {grib_def} definitions")
