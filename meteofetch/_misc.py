@@ -84,7 +84,6 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
 
 def set_grib_defs(source: sources):
     current_path = os.environ.get("ECCODES_DEFINITION_PATH")
-    new_path = None
 
     if source == "WMO":
         required_path = None
