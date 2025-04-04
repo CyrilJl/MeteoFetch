@@ -18,7 +18,10 @@ from meteofetch import (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
+    set_grib_defs
 )
+
+set_grib_defs('MeteoFrance')
 
 MODELS = (
     Arome001,
