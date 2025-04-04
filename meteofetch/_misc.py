@@ -83,14 +83,19 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
 
 
 def set_grib_defs(source: sources):
+    current_path = os.environ.get("ECCODES_DEFINITION_PATH")
+    new_path = None
+
     if source == "WMO":
-        # Supprime seulement si la variable existe
-        os.environ.pop("ECCODES_DEFINITION_PATH", None)
+        required_path = None
     elif source == "MeteoFrance":
-        # Définit le chemin vers les définitions MeteoFrance
-        os.environ["ECCODES_DEFINITION_PATH"] = str(Path(__file__).parent / 'gribdefs')
+        required_path = str(Path(__file__).parent / 'gribdefs')
     else:
-        raise ValueError(f"Unknown GRIB definitions source: {source}")
-    
-    # Recharge le contexte eccodes
-    eccodes.codes_context_delete()
+        raise ValueError(f"Source inconnue : {source}")
+
+    if current_path != required_path:
+        if source == "WMO":
+            os.environ.pop("ECCODES_DEFINITION_PATH", None)  # Suppression sécurisée
+        else:
+            os.environ["ECCODES_DEFINITION_PATH"] = required_path
+        eccodes.codes_context_delete()
