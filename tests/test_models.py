@@ -51,7 +51,7 @@ def test_models_with_grib_defs(model, grib_def):
     print(f"\nTesting {model.__name__} with {grib_def} definitions")
     
     for paquet in model.paquets_:
-        print(f"\nModel: {model.__class__.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
+        print(f"\nModel: {model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
         datasets = model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
 
