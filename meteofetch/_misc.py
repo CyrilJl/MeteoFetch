@@ -3,6 +3,7 @@ The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import
 """
 
 import os
+from pathlib import Path
 from typing import Literal
 
 import eccodes
@@ -85,5 +86,5 @@ def set_grib_defs(source: sources):
     if source == "WMO":
         del os.environ["ECCODES_DEFINITION_PATH"]
     if source == "MeteoFrance":
-        os.environ["ECCODES_DEFINITION_PATH"] = str(eccodes.codes_get_default("definition_path"))
+        os.environ["ECCODES_DEFINITION_PATH"] = str(Path(__file__).parent / 'gribdefs')
     eccodes.codes_context_delete()
