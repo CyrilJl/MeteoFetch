@@ -187,7 +187,6 @@ class Model:
 
         for k in range(max_attempts):
             current_date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
-            date_str = f"{current_date:%Y-%m-%dT%H}"
             try:
                 forecast_data = cls.get_forecast(
                     date=current_date,
@@ -197,19 +196,15 @@ class Model:
                 )
                 if forecast_data:
                     return forecast_data
-                else:
-                    print(
-                        f"Forecast run found for {date_str}, but requested variables not present or no data extracted."
-                    )
 
-            except requests.HTTPError as e:
-                print(f"HTTPError for date {date_str}: {e}. Trying earlier forecast.")
+            except requests.HTTPError as _:
                 continue
-            except Exception as e:
-                print(f"Unexpected error trying date {date_str}: {e}. Trying earlier forecast.")
+            except Exception as _:
                 continue
 
-        raise requests.HTTPError(f"No forecast found for paquet={paquet} within the last {max_attempts} runs.")
+        raise requests.HTTPError(
+            f"Pas de données touvées pour le paquet={paquet} parmi les {max_attempts} derniers runs."
+        )
 
 
 class HourlyProcess:
