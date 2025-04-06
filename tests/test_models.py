@@ -33,7 +33,7 @@ for m in MODELS:
     m.groups_ = m.groups_[:2]
 
 # Liste des configurations GRIB à tester
-GRIB_DEFS = ['WMO', 'MeteoFrance']
+GRIB_DEFS = ['eccodes', 'MeteoFrance']
 
 # Fixture pour les modèles
 @pytest.fixture(params=MODELS)
