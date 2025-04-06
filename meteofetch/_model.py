@@ -130,7 +130,7 @@ class Model:
         raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
 
 
-def common_process(ds: xr.Dataset) -> xr.Dataset:
+def common_process(ds: xr.DataArray) -> xr.DataArray:
     ds["longitude"] = xr.where(
         ds["longitude"] <= 180.0,
         ds["longitude"],
