@@ -94,6 +94,26 @@ class Model:
 
     @classmethod
     def get_latest_forecast(cls, paquet="SP1", variables=None, num_workers: int = 4) -> Dict[str, xr.DataArray]:
+        """Récupère les dernières prévisions disponibles parmi les runs récents.
+
+        Tente de télécharger les données des dernières prévisions en testant successivement les runs les plus récents
+        jusqu'à trouver des données valides. Les runs sont testés dans l'ordre chronologique inverse.
+
+        Args:
+            paquet (str, optional): Le paquet de données à télécharger. Doit faire partie de cls.paquets_.
+                Defaults to "SP1".
+            variables (str|List[str], optional): Variable(s) à extraire des fichiers GRIB. Si None, toutes les variables
+                sont conservées. Defaults to None.
+            num_workers (int, optional): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
+
+        Returns:
+            Dict[str, xr.DataArray]: Dictionnaire des DataArrays des variables demandées, avec les coordonnées
+                géographiques encodées selon les conventions CF.
+
+        Raises:
+            ValueError: Si le paquet spécifié n'est pas valide.
+            requests.HTTPError: Si aucun paquet valide n'a été trouvé parmi les cls.past_runs_ derniers runs.
+        """
         cls.check_paquet(paquet)
         latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
 
