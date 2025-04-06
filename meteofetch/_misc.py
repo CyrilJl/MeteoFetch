@@ -9,7 +9,7 @@ from typing import Literal
 import eccodes
 import xarray as xr
 
-sources = Literal["eccodes", "MeteoFrance"]
+sources = Literal["eccodes", "meteofrance"]
 
 CRS_WKT = """
             GEOGCRS[
@@ -87,7 +87,7 @@ def set_grib_defs(source: sources):
 
     if source == "eccodes":
         required_path = None
-    elif source == "MeteoFrance":
+    elif source == "meteofrance":
         required_path = str(Path(__file__).parent / "gribdefs")
     else:
         raise ValueError(f"Source inconnue : {source}")
