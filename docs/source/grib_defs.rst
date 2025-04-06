@@ -56,9 +56,10 @@ Avantages:
 Inconvénients:
 ^^^^^^^^^^^^^^
 * **Moins de métadonnées**:
-  * Les unités peuvent être absentes
-  * Les descriptions (``long_name``) sont parfois manquantes
-  * Les ``xarray.DataArray`` produits peuvent donc être moins documentés
+
+  - Les unités peuvent être absentes
+  - Les descriptions (``long_name``) sont parfois manquantes
+  - Les ``xarray.DataArray`` produits peuvent donc être moins documentés
 
 Évolutions futures
 ------------------
