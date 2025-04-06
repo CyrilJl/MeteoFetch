@@ -9,7 +9,7 @@ from typing import Literal
 import eccodes
 import xarray as xr
 
-sources = Literal["WMO", "MeteoFrance"]
+sources = Literal["eccodes", "MeteoFrance"]
 
 CRS_WKT = """
             GEOGCRS[
@@ -85,15 +85,15 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
 def set_grib_defs(source: sources):
     current_path = os.environ.get("ECCODES_DEFINITION_PATH")
 
-    if source == "WMO":
+    if source == "eccodes":
         required_path = None
     elif source == "MeteoFrance":
-        required_path = str(Path(__file__).parent / 'gribdefs')
+        required_path = str(Path(__file__).parent / "gribdefs")
     else:
         raise ValueError(f"Source inconnue : {source}")
 
     if current_path != required_path:
-        if source == "WMO":
+        if source == "eccodes":
             os.environ.pop("ECCODES_DEFINITION_PATH", None)  # Suppression sécurisée
         else:
             os.environ["ECCODES_DEFINITION_PATH"] = required_path
