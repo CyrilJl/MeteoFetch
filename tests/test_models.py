@@ -1,7 +1,8 @@
 from gc import collect
+
+import cfgrib
 import pytest
 import xarray as xr
-import cfgrib
 
 from meteofetch import (
     Arome001,
@@ -13,7 +14,7 @@ from meteofetch import (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
-    set_grib_defs
+    set_grib_defs,
 )
 
 MODELS = (
@@ -33,23 +34,26 @@ for m in MODELS:
     m.groups_ = m.groups_[:2]
 
 # Liste des configurations GRIB à tester
-GRIB_DEFS = ['eccodes', 'MeteoFrance']
+GRIB_DEFS = ["eccodes", "meteofrance"]
+
 
 # Fixture pour les modèles
 @pytest.fixture(params=MODELS)
 def model(request):
     return request.param
 
+
 # Fixture pour les configurations GRIB
 @pytest.fixture(params=GRIB_DEFS)
 def grib_def(request):
     return request.param
 
+
 def test_models_with_grib_defs(grib_def, model):
     # Configurer les définitions GRIB
     set_grib_defs(grib_def)
     print(f"\nTesting {model.__name__} with {grib_def} definitions")
-    
+
     for paquet in model.paquets_:
         print(f"\nModel: {model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
         datasets = model.get_latest_forecast(paquet=paquet)
