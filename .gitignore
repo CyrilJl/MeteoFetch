@@ -1,5 +1,5 @@
 # Notebooks
-.ipynb
+*.ipynb
 
 # VSCode
 .vscode
