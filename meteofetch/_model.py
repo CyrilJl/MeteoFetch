@@ -32,6 +32,7 @@ class Model:
 
                 with open(temp_path, "wb") as f:
                     f.write(response.content)
+                del response
                 datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""})
 
                 dataarrays = []
