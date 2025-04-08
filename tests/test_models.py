@@ -1,8 +1,6 @@
 from gc import collect
 
-import cfgrib
 import pytest
-import xarray as xr
 
 from meteofetch import (
     Arome001,
@@ -15,7 +13,10 @@ from meteofetch import (
     Arpege01,
     Arpege025,
     set_grib_defs,
+    set_test_mode,
 )
+
+set_test_mode()
 
 MODELS = (
     Arome001,
