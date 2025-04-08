@@ -1,4 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, List
@@ -58,7 +58,8 @@ class Model:
         ]
 
         ret = {}
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+
+        with ProcessPoolExecutor(max_workers=num_workers) as executor:
             future_to_url = {executor.submit(cls._download_file, url, variables_): url for url in urls_to_download}
 
             for future in as_completed(future_to_url):
