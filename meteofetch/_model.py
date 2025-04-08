@@ -83,7 +83,7 @@ class Model:
                     del da
 
         for field in ret:
-            ret[field] = xr.concat(ret[field], dim="time")
+            ret[field] = xr.concat(ret[field], dim="time", coords="minimal")
             ret[field] = geo_encode_cf(ret[field])
         return ret
 
