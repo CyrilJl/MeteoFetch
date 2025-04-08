@@ -8,7 +8,7 @@ from ._arome import (
     AromeOutreMerPolynesie,
 )
 from ._arpege import Arpege01, Arpege025
-from ._misc import set_grib_defs
+from ._misc import set_grib_defs, set_test_mode
 
 __all__ = [
     "Arome001",
@@ -21,4 +21,5 @@ __all__ = [
     "Arpege01",
     "Arpege025",
     "set_grib_defs",
+    "set_test_mode",
 ]

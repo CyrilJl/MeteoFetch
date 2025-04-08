@@ -103,3 +103,8 @@ def set_grib_defs(source: sources):
             os.environ["ECCODES_DEFINITION_PATH"] = required_path
         warnings.warn(f"Définitions GRIB mises à jour : {source}")
         eccodes.codes_context_delete()
+
+
+def set_test_mode():
+    os.environ["meteofetch_test_mode"] = "1"
+    print("Mode test activé. Les données des xr.DataArrays sont transformés booléens par isnull().")
