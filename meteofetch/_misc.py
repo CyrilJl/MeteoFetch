@@ -3,13 +3,17 @@ The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import
 """
 
 import os
+import warnings
 from pathlib import Path
 from typing import Literal
 
 import eccodes
 import xarray as xr
 
+warnings.formatwarning = lambda msg, *args, **kwargs: str(msg) + "\n"
+
 sources = Literal["eccodes", "meteofrance"]
+
 
 CRS_WKT = """
             GEOGCRS[
@@ -94,7 +98,8 @@ def set_grib_defs(source: sources):
 
     if current_path != required_path:
         if source == "eccodes":
-            os.environ.pop("ECCODES_DEFINITION_PATH", None)  # Suppression sécurisée
+            os.environ.pop("ECCODES_DEFINITION_PATH", None)
         else:
             os.environ["ECCODES_DEFINITION_PATH"] = required_path
+        warnings.warn(f"Définitions GRIB mises à jour : {source}")
         eccodes.codes_context_delete()
