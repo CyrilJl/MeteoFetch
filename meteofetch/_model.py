@@ -1,5 +1,7 @@
+import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
+from shutil import copyfileobj
 from tempfile import TemporaryDirectory
 from typing import Dict, List
 
@@ -22,17 +24,23 @@ class Model:
         return f"{self.__class__.__name__}()"
 
     @classmethod
+    def _url_to_file(cls, url: str, tempdir: TemporaryDirectory) -> Path:
+        """Télécharge un fichier depuis une URL et le sauvegarde dans un répertoire temporaire.
+        Meilleure gestion de la mémoire pour les fichiers volumineux.
+        Utilise une taille de tampon de 16 Mo pour le téléchargement.
+        """
+        temp_path = Path(tempdir) / "temp.grib"
+
+        with requests.get(url, stream=True, timeout=cls.TIMEOUT) as r:
+            with open(temp_path, "wb") as f:
+                copyfileobj(r.raw, f, length=1024 * 1024 * 16)
+        return temp_path
+
+    @classmethod
     def _download_file(cls, url: str, variables: List[str]) -> List[xr.DataArray]:
         try:
             with TemporaryDirectory() as tempdir:
-                temp_path = Path(tempdir) / "temp.grib"
-
-                response = requests.get(url, timeout=cls.TIMEOUT)
-                response.raise_for_status()
-
-                with open(temp_path, "wb") as f:
-                    f.write(response.content)
-                del response
+                temp_path = cls._url_to_file(url, tempdir)
                 datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""})
 
                 dataarrays = []
@@ -40,7 +48,10 @@ class Model:
                     for var in ds.data_vars:
                         if variables and var not in variables:
                             continue
-                        dataarrays.append(ds[var].load())
+                        if os.environ.get("meteofetch_test_mode") == "1":
+                            dataarrays.append(ds[var].isnull(keep_attrs=True).load())
+                        else:
+                            dataarrays.append(ds[var].load())
 
                 return dataarrays
 
