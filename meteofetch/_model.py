@@ -39,7 +39,7 @@ class Model:
     @classmethod
     def _download_file(cls, url: str, variables: List[str]) -> List[xr.DataArray]:
         try:
-            with TemporaryDirectory() as tempdir:
+            with TemporaryDirectory(prefix="meteofetch_") as tempdir:
                 temp_path = cls._url_to_file(url, tempdir)
                 datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""})
 
