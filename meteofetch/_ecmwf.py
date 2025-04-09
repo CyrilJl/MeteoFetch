@@ -8,6 +8,7 @@ from typing import Dict, List
 import cfgrib
 import pandas as pd
 import requests
+import numpy as np
 import xarray as xr
 
 from ._misc import geo_encode_cf
@@ -60,7 +61,7 @@ class Ecmwf:
                         if variables and var not in variables:
                             continue
                         if os.environ.get("meteofetch_test_mode") == "1":
-                            dataarrays.append((~ds[var].isnull(keep_attrs=True)).load())
+                            dataarrays.append(np.isfinite(ds[var]))
                         else:
                             dataarrays.append(ds[var].load())
 
