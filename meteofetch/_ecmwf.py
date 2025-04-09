@@ -14,7 +14,9 @@ from ._misc import geo_encode_cf
 
 
 class Ecmwf:
-    """Classe de récupération des données forecast opérationnelles ECMWF"""
+    """Classe de récupération des données forecast opérationnelles ECMWF
+    https://www.ecmwf.int/en/forecasts/datasets/open-data
+    """
 
     TIMEOUT = 20
     base_url_ = "https://data.ecmwf.int/ecpds/home/opendata"
