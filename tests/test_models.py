@@ -12,7 +12,7 @@ from meteofetch import (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
-    ECMWF,
+    Ecmwf,
     set_grib_defs,
     set_test_mode,
 )
@@ -70,8 +70,8 @@ def test_meteo_france_models_with_grib_defs(grib_def, model):
         del datasets
         collect()
 
-def test_ecmwf():
-    datasets = ECMWF.get_latest_forecast(paquet=paquet)
+def test_Ecmwf():
+    datasets = Ecmwf.get_latest_forecast(paquet=paquet)
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
