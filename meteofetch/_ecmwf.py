@@ -13,7 +13,7 @@ import xarray as xr
 from ._misc import geo_encode_cf
 
 
-class ECMWF:
+class Ecmwf:
     """Classe de récupération des données forecast opérationnelles ECMWF"""
 
     TIMEOUT = 20
