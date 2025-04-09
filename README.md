@@ -109,9 +109,71 @@ datasets["t2m"].mean(dim="time").plot(cmap="Spectral_r")
 
 ## Nomenclature
 
+### ECMWF
+
+<details>  
+<summary>Résumé des champs requêtables pour les prévisions globe de l'ECMWF :</summary>
+
+| Champ   | Description                                               | Unités             | Dimensions                                 | Shape dun run complet |
+|---------|-----------------------------------------------------------|--------------------|--------------------------------------------|-----------------------|
+| tcw     | Total column water                                        | kg m**-2           | (time, latitude, longitude)                | (85, 721, 1440)       |
+| tcwv    | Total column vertically-integrated water vapour           | kg m**-2           | (time, latitude, longitude)                | (85, 721, 1440)       |
+| fg10    | Maximum 10 metre wind gust since previous post-processing | m s**-1            | (time, latitude, longitude)                | (67, 721, 1440)       |
+| u10     | 10 metre U wind component                                 | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| v10     | 10 metre V wind component                                 | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| t2m     | 2 metre temperature                                       | K                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| d2m     | 2 metre dewpoint temperature                              | K                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| mx2t3   | Maximum temperature at 2 metres in the last 3 hours       | K                  | (time, latitude, longitude)                | (49, 721, 1440)       |
+| mn2t3   | Minimum temperature at 2 metres in the last 3 hours       | K                  | (time, latitude, longitude)                | (49, 721, 1440)       |
+| u100    | 100 metre U wind component                                | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| v100    | 100 metre V wind component                                | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| t       | Temperature                                               | K                  | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| u       | U component of wind                                       | m s**-1            | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| v       | V component of wind                                       | m s**-1            | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| q       | Specific humidity                                         | kg kg**-1          | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| w       | Vertical velocity                                         | Pa s**-1           | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| vo      | Vorticity (relative)                                      | s**-1              | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| d       | Divergence                                                | s**-1              | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| gh      | Geopotential height                                       | gpm                | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| r       | Relative humidity                                         | %                  | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   |
+| msl     | Mean sea level pressure                                   | Pa                 | (time, latitude, longitude)                | (85, 721, 1440)       |
+| mucape  | Most-unstable CAPE                                        | J kg**-1           | (time, latitude, longitude)                | (85, 721, 1440)       |
+| ttr     | Top net long-wave (thermal) radiation                     | J m**-2            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| vsw     | Volumetric soil moisture                                  | m**3 m**-3         | (time, soilLayer, latitude, longitude)     | (85, 4, 721, 1440)    |
+| sot     | Soil temperature                                          | K                  | (time, soilLayer, latitude, longitude)     | (85, 4, 721, 1440)    |
+| asn     | Snow albedo                                               | (0 - 1)            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| z       | Geopotential                                              | m**2 s**-2         | (time, latitude, longitude)                | (1, 721, 1440)        |
+| sp      | Surface pressure                                          | Pa                 | (time, latitude, longitude)                | (85, 721, 1440)       |
+| sdor    | Standard deviation of sub-gridscale orography             | m                  | (time, latitude, longitude)                | (1, 721, 1440)        |
+| slor    | Slope of sub-gridscale orography                          | Numeric            | (time, latitude, longitude)                | (1, 721, 1440)        |
+| ssrd    | Surface short-wave (solar) radiation downwards            | J m**-2            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| lsm     | Land-sea mask                                             | (0 - 1)            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| strd    | Surface long-wave (thermal) radiation downwards           | J m**-2            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| ssr     | Surface net short-wave (solar) radiation                  | J m**-2            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| str     | Surface net long-wave (thermal) radiation                 | J m**-2            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| ewss    | Time-integrated eastward turbulent surface stress         | N m**-2 s          | (time, latitude, longitude)                | (85, 721, 1440)       |
+| nsss    | Time-integrated northward turbulent surface stress        | N m**-2 s          | (time, latitude, longitude)                | (85, 721, 1440)       |
+| ro      | Runoff                                                    | m                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| tp      | Total precipitation                                       | m                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| skt     | Skin temperature                                          | K                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| ptype   | Precipitation type                                        | (Code table 4.201) | (time, latitude, longitude)                | (85, 721, 1440)       |
+| tprate  | Total precipitation rate                                  | kg m**-2 s**-1     | (time, latitude, longitude)                | (85, 721, 1440)       |
+| sithick | Sea ice thickness                                         | m                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| zos     | Sea surface height                                        | m                  | (time, latitude, longitude)                | (85, 721, 1440)       |
+| svn     | Northward surface sea water velocity                      | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| sve     | Eastward surface sea water velocity                       | m s**-1            | (time, latitude, longitude)                | (85, 721, 1440)       |
+| fg310   | Maximum 10 metre wind gust in the last 3 hours            | m s**-1            | (time, latitude, longitude)                | (18, 721, 1440)       |
+| mx2t6   | Maximum temperature at 2 metres in the last 6 hours       | K                  | (time, latitude, longitude)                | (36, 721, 1440)       |
+| mn2t6   | Minimum temperature at 2 metres in the last 6 hours       | K                  | (time, latitude, longitude)                | (36, 721, 1440)       |
+
+
+</details>
+
+### MétéoFrance
+
 Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpege 0.1°, Arome 0.025° et Arome 0.01°) sont à aires limitées. Arpege 0.1° couvre l'Europe, tandis que les deux modèles Arome couvrent la France, mais avec des résolutions différentes.
 
-### Arome001
+#### Arome001
 
 <details>
 <summary>Résumé des champs contenus dans chaque paquet requêtable pour Arome001 :</summary>
@@ -148,7 +210,7 @@ Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpe
 
 </details>
 
-### Arome0025
+#### Arome0025
 
 <details>
 <summary>Résumé des champs contenus dans chaque paquet requêtable pour Arome0025 :</summary>
@@ -244,7 +306,7 @@ Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpe
 
 </details>
 
-### Arpege01
+#### Arpege01
 
 <details>
 <summary>Résumé des champs contenus dans chaque paquet requêtable pour Arpege01 :</summary>
@@ -329,7 +391,7 @@ Arpege 0.25° est un modèle couvrant le globe, alors que les trois autres (Arpe
 
 </details>
 
-### Arpege025
+#### Arpege025
 
 <details>
 <summary>Résumé des champs contenus dans chaque paquet requêtable pour Arpege025 :</summary>
