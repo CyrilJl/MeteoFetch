@@ -32,7 +32,7 @@ MODELS = (
 )
 
 # Limiter le nombre de groupes pour tous les modèles
-for m in MODELS:
+for m in MODELS + (Ecmwf, ):
     m.groups_ = m.groups_[:2]
 
 # Liste des configurations GRIB à tester
