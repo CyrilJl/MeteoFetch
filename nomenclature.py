@@ -2,14 +2,23 @@ from meteofetch import Arome001, Arome0025, AromeOutreMerAntilles, Arpege01, Arp
 
 set_test_mode()
 
-for model in (Arome001, Arome0025, AromeOutreMerAntilles, Arpege01, Arpege025,):
+for model in (
+    Arome001,
+    Arome0025,
+    AromeOutreMerAntilles,
+    Arpege01,
+    Arpege025,
+):
     print(model.__name__)
     print()
     for j, paquet in enumerate(model.paquets_):
-        print()
-        if j==0:
-            print("| Paquet | Champ    | Description                                                 | Dimensions                                     | Shape dun run complet |")
-            print("|--------|----------|-------------------------------------------------------------|------------------------------------------------|-----------------------|")
+        if j == 0:
+            print(
+                "| Paquet | Champ    | Description                                                 | Dimensions                                     | Shape dun run complet |"
+            )
+            print(
+                "|--------|----------|-------------------------------------------------------------|------------------------------------------------|-----------------------|"
+            )
         datasets = model.get_latest_forecast(paquet=paquet, num_workers=6)
         for k, field in enumerate(datasets):
             ds = datasets[field]
