@@ -8,6 +8,7 @@ from typing import Dict, List
 import cfgrib
 import pandas as pd
 import requests
+import numpy as np
 import xarray as xr
 
 from ._misc import geo_encode_cf
