@@ -50,7 +50,7 @@ class Model:
                         if variables and var not in variables:
                             continue
                         if os.environ.get("meteofetch_test_mode") == "1":
-                            dataarrays.append(dataarrays.append(ds[var].isnull()))
+                            dataarrays.append(ds[var].isnull())
                         else:
                             dataarrays.append(ds[var].load())
 
