@@ -14,10 +14,10 @@ for model in (
     for j, paquet in enumerate(model.paquets_):
         if j == 0:
             print(
-                "| Paquet | Champ    | Description                                                 | Dimensions                                     | Shape dun run complet |"
+                " Paquet | Champ    | Description                                                 | Dimensions                                     | Shape dun run complet |"
             )
             print(
-                "|--------|----------|-------------------------------------------------------------|------------------------------------------------|-----------------------|"
+                "--------|----------|-------------------------------------------------------------|------------------------------------------------|-----------------------|"
             )
         datasets = model.get_latest_forecast(paquet=paquet, num_workers=6)
         for k, field in enumerate(datasets):
