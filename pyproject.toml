@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "meteofetch"
-version = "0.4"
+version = "0.4.1"
 authors = [{ name = "Cyril Joly" }]
 description = "Package python pour récupérer les données modélisées de prévision de MétéoFrance"
 readme = "README.md"
