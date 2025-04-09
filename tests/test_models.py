@@ -65,6 +65,6 @@ def test_models_with_grib_defs(grib_def, model):
             ds = datasets[field]
             if "time" in ds.dims:
                 assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-            assert ds.isnull().mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
+            assert ds.isnull().mean() > 0 f"Le champ {field} contient trop de valeurs manquantes."
         del datasets
         collect()
