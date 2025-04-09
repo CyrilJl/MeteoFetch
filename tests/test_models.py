@@ -58,7 +58,7 @@ def test_ecmwf():
         ds = datasets[field]
         if "time" in ds.dims:
             assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-        assert ds.mean() > 0, f"Le champ {field} contient trop de valeurs manquantes."
+        assert ds.mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
     del datasets
     collect()
 
@@ -78,6 +78,6 @@ def test_meteo_france_models_with_grib_defs(grib_def, model):
             ds = datasets[field]
             if "time" in ds.dims:
                 assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
-            assert ds.mean() > 0, f"Le champ {field} contient trop de valeurs manquantes."
+            assert ds.mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
         del datasets
         collect()
