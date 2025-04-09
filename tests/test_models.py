@@ -52,7 +52,7 @@ def grib_def(request):
 
 
 def test_ecmwf():
-    datasets = Ecmwf.get_latest_forecast(paquet=paquet)
+    datasets = Ecmwf.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
