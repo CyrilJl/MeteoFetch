@@ -70,7 +70,7 @@ def test_meteo_france_models_with_grib_defs(grib_def, model):
 
     for paquet in model.paquets_:
         print(f"\nModel: {model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
-        datasets = model.get_latest_forecast(paquet=paquet)
+        datasets = model.get_latest_forecast(paquet=paquet, num_workers=1)
         assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
 
         for field in datasets:
