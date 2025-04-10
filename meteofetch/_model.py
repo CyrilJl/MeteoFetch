@@ -42,7 +42,7 @@ class Model:
         try:
             with TemporaryDirectory(prefix="meteofetch_") as tempdir:
                 temp_path = cls._url_to_file(url, tempdir)
-                datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""})
+                datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
 
                 dataarrays = []
                 for ds in datasets:
