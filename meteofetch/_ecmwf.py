@@ -19,7 +19,7 @@ class Ecmwf:
     https://www.ecmwf.int/en/forecasts/datasets/open-data
     """
 
-    TIMEOUT = 20
+    TIMEOUT = 40
     base_url_ = "https://data.ecmwf.int/ecpds/home/opendata"
     past_runs_ = 8
     freq_update = 12
