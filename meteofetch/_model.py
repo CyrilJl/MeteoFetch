@@ -17,7 +17,7 @@ from ._misc import geo_encode_cf
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
-    TIMEOUT = 20
+    TIMEOUT = 120
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
     past_runs_ = 8
 
