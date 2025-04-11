@@ -104,4 +104,4 @@ def set_grib_defs(source: sources):
 
 def set_test_mode():
     os.environ["meteofetch_test_mode"] = "1"
-    print("Mode test activé. Les données des xr.DataArrays sont transformés booléens par isnull().")
+    print("Mode test activé. Les données des xr.DataArrays sont transformés en booléens par isnull().")
