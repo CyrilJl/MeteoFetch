@@ -77,7 +77,7 @@ class Model:
                     if field not in ret:
                         ret[field] = []
                     if os.environ.get("meteofetch_test_mode") == "1":
-                        ret[field].append(ds[field].isnull(keep_attrs=True))
+                        ret[field].append(cls._process_ds(ds[field].isnull(keep_attrs=True)))
                     else:
                         ret[field].append(cls._process_ds(ds[field].load()))
         for field in ret:
