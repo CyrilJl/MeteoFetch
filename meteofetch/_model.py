@@ -1,9 +1,9 @@
 import os
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from shutil import copyfileobj
 from tempfile import TemporaryDirectory
-from typing import Dict, List
+from typing import Dict
 
 import cfgrib
 import pandas as pd
@@ -24,89 +24,108 @@ class Model:
         return f"{self.__class__.__name__}()"
 
     @classmethod
-    def _url_to_file(cls, url: str, tempdir: TemporaryDirectory) -> Path:
-        """Télécharge un fichier depuis une URL et le sauvegarde dans un répertoire temporaire.
-        Meilleure gestion de la mémoire pour les fichiers volumineux.
-        Utilise une taille de tampon de 16 Mo pour le téléchargement.
-        """
-        temp_path = Path(tempdir) / "temp.grib"
-
-        with requests.get(url, stream=True, timeout=cls.TIMEOUT) as r:
-            with open(temp_path, "wb") as f:
-                copyfileobj(r.raw, f, length=1024 * 1024 * 64)
-        return temp_path
-
-    @classmethod
-    def _download_file(cls, url: str, variables: List[str]) -> List[xr.DataArray]:
-        try:
-            with TemporaryDirectory(prefix="meteofetch_") as tempdir:
-                temp_path = cls._url_to_file(url, tempdir)
-                datasets = cfgrib.open_datasets(temp_path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
-
-                dataarrays = []
-                for ds in datasets:
-                    for var in ds.data_vars:
-                        if variables and var not in variables:
-                            continue
-                        if os.environ.get("meteofetch_test_mode") == "1":
-                            dataarrays.append(ds[var].isnull(keep_attrs=True))
-                        else:
-                            dataarrays.append(ds[var].load())
-
-                return dataarrays
-
-        except Exception:
-            return []
-
-    @classmethod
-    def _download_paquet(cls, date, paquet, variables, num_workers: int) -> Dict[str, xr.DataArray]:
-        if isinstance(variables, str):
-            variables_ = (variables,)
-        else:
-            variables_ = variables
-
-        urls_to_download = [
-            cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group) for group in cls.groups_
-        ]
-
-        ret = {}
-
-        with ProcessPoolExecutor(max_workers=num_workers) as executor:
-            future_to_url = {executor.submit(cls._download_file, url, variables_): url for url in urls_to_download}
-
-            for future in as_completed(future_to_url):
-                dataarrays = future.result()
-                for da in dataarrays:
-                    if da.name not in ret:
-                        ret[da.name] = []
-                    ret[da.name].append(cls._process_ds(da))
-                    del da
-
-        for field in ret:
-            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
-            ret[field] = geo_encode_cf(ret[field])
-        return ret
-
-    @classmethod
     def check_paquet(cls, paquet):
         """Vérifie si le paquet spécifié est valide."""
         if paquet not in cls.paquets_:
             raise ValueError(f"Le paquet doit être un des suivants : {cls.paquets_}")
 
     @classmethod
-    def get_forecast(cls, date, paquet="SP1", variables=None, num_workers: int = 4) -> Dict[str, xr.DataArray]:
+    def _url_to_file(cls, url: str, tempdir: TemporaryDirectory) -> Path:
+        """Télécharge un fichier depuis une URL et le sauvegarde dans un répertoire temporaire.
+        Meilleure gestion de la mémoire pour les fichiers volumineux.
+        Utilise une taille de tampon de 16 Mo pour le téléchargement.
+        """
+        try:
+            temp_path = Path(tempdir) / os.path.basename(url).replace(":", "-")
+
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(temp_path, "wb") as f:
+                    copyfileobj(r.raw, f, length=1024 * 1024 * 64)
+            return temp_path
+        except Exception:
+            return False
+
+    @classmethod
+    def _download_groups(cls, urls, path, num_workers):
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            paths = executor.map(lambda url: cls._url_to_file(url, path), urls)
+        return list(paths)
+
+    @classmethod
+    def _download_paquet(cls, date, paquet, path, num_workers):
+        cls.check_paquet(paquet)
+
+        urls = [cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group) for group in cls.groups_]
+        paths = cls._download_groups(urls, path, num_workers)
+        if not all(paths):
+            return []
+        else:
+            return paths
+
+    @classmethod
+    def _read_paquet(cls, paths, variables):
+        ret = {}
+        for path in paths:
+            datasets = cfgrib.open_datasets(
+                path=path, backend_kwargs={"indexpath": "", "decode_timedelta": True}, cache=False
+            )
+            for ds in datasets:
+                for field in ds.data_vars:
+                    if variables and field not in variables:
+                        continue
+                    if field not in ret:
+                        ret[field] = []
+                    if os.environ.get("meteofetch_test_mode") == "1":
+                        ret[field].append(ds[field].isnull(keep_attrs=True))
+                    else:
+                        ret[field].append(cls._process_ds(ds[field].load()))
+        for field in ret:
+            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
+            ret[field] = geo_encode_cf(ret[field])
+        return ret
+
+    @classmethod
+    def get_forecast(
+        cls,
+        date,
+        paquet="SP1",
+        variables=None,
+        path=None,
+        return_data=True,
+        num_workers: int = 4,
+    ) -> Dict[str, xr.DataArray]:
         cls.check_paquet(paquet)
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
         date_str = f"{date_dt:%Y-%m-%dT%H}"
-        return cls._download_paquet(
-            date=date_str,
-            paquet=paquet,
-            variables=variables,
-            num_workers=num_workers,
-        )
+
+        if (path is None) and (not return_data):
+            raise ValueError("Le chemin doit être spécifié si return_data est False.")
+
+        with TemporaryDirectory(prefix="meteofetch_") as tempdir:
+            if path is None:
+                path = tempdir
+
+            paths = cls._download_paquet(
+                date=date_str,
+                paquet=paquet,
+                path=path,
+                num_workers=num_workers,
+            )
+            if return_data:
+                return cls._read_paquet(paths, variables)
+            else:
+                return paths
 
     @classmethod
-    def get_latest_forecast(cls, paquet="SP1", variables=None, num_workers: int = 4) -> Dict[str, xr.DataArray]:
+    def get_latest_forecast(
+        cls,
+        paquet="SP1",
+        variables=None,
+        path=None,
+        return_data=True,
+        num_workers: int = 4,
+    ) -> Dict[str, xr.DataArray]:
         """Récupère les dernières prévisions disponibles parmi les runs récents.
 
         Tente de télécharger les données des dernières prévisions en testant successivement les runs les plus récents
@@ -132,14 +151,17 @@ class Model:
 
         for k in range(cls.past_runs_):
             current_date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
-            datasets = cls.get_forecast(
+            ret = cls.get_forecast(
                 date=current_date,
                 paquet=paquet,
                 variables=variables,
+                path=path,
+                return_data=return_data,
                 num_workers=num_workers,
             )
-            if datasets:
-                return datasets
+            if ret:
+                return ret
+
         raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
 
 
