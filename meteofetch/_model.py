@@ -1,5 +1,6 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 from pathlib import Path
 from shutil import copyfileobj
 from tempfile import TemporaryDirectory
@@ -64,25 +65,32 @@ class Model:
             return paths
 
     @classmethod
-    def _read_paquet(cls, paths, variables):
+    def _read_path(cls, path):
+        return cfgrib.open_datasets(path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
+
+    @classmethod
+    def _read_paquet(cls, paths, variables, num_workers):
+        """Lit les fichiers GRIB en parallèle avec multiprocessing."""
         ret = {}
-        for path in paths:
-            datasets = cfgrib.open_datasets(
-                path=path, backend_kwargs={"indexpath": "", "decode_timedelta": True}, cache=False
-            )
-            for ds in datasets:
-                for field in ds.data_vars:
-                    if variables and field not in variables:
-                        continue
-                    if field not in ret:
-                        ret[field] = []
-                    if os.environ.get("meteofetch_test_mode") == "1":
-                        ret[field].append(cls._process_ds(ds[field].isnull(keep_attrs=True)))
-                    else:
-                        ret[field].append(cls._process_ds(ds[field].load()))
+
+        with Pool(processes=num_workers) as pool:
+            # Traiter les fichiers en parallèle et recevoir les résultats au fur et à mesure
+            for datasets in pool.imap_unordered(cls._read_path, paths):
+                for ds in datasets:
+                    for field in ds.data_vars:
+                        if variables and field not in variables:
+                            continue
+                        if field not in ret:
+                            ret[field] = []
+                        if os.environ.get("meteofetch_test_mode") == "1":
+                            ds[field] = ds[field].isnull(keep_attrs=True)
+                        ret[field].append(cls._process_ds(ds[field]))
+
+        # Concaténer les résultats pour chaque champ
         for field in ret:
             ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
             ret[field] = geo_encode_cf(ret[field])
+
         return ret
 
     @classmethod
@@ -113,7 +121,11 @@ class Model:
                 num_workers=num_workers,
             )
             if return_data:
-                return cls._read_paquet(paths, variables)
+                datasets = cls._read_paquet(paths=paths, variables=variables, num_workers=num_workers)
+                if path is None:
+                    for da in datasets:
+                        da.load()
+                return datasets
             else:
                 return paths
 
@@ -173,6 +185,7 @@ def common_process(ds: xr.DataArray) -> xr.DataArray:
         keep_attrs=True,
     )
     ds = ds.sortby("longitude").sortby("latitude")
+    ds.attrs["Packaged by"] = "meteofetch"
     return ds
 
 
