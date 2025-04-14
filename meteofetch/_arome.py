@@ -33,7 +33,15 @@ class Arome0025(Model, MultiHourProcess):
     freq_update = 3
 
 
-class AromeOutreMerAntilles(Model, HourlyProcess):
+class AromeOutreMer(Model, HourlyProcess):
+    @classmethod
+    def _get_groups(cls, paquet):
+        if paquet in ("IP4", "HP3"):
+            return cls.groups_[1:]
+        return cls.groups_
+
+
+class AromeOutreMerAntilles(AromeOutreMer):
     """Regroupement de différents paramètres du modèle atmosphérique français à aire limitée à haute résolution AROME sur les Antilles françaises.
 
     Champs d’analyse et de prévision en points de grille régulière sur le domaine “Antilles”.
@@ -46,7 +54,7 @@ class AromeOutreMerAntilles(Model, HourlyProcess):
     freq_update = 3
 
 
-class AromeOutreMerGuyane(Model, HourlyProcess):
+class AromeOutreMerGuyane(AromeOutreMer):
     """Regroupement de différents paramètres du modèle atmosphérique français à aire limitée à haute résolution AROME sur la Guyane.
 
     Champs d’analyse et de prévision en points de grille régulière sur le domaine “Guyane”.
@@ -59,7 +67,7 @@ class AromeOutreMerGuyane(Model, HourlyProcess):
     freq_update = 3
 
 
-class AromeOutreMerIndien(Model, HourlyProcess):
+class AromeOutreMerIndien(AromeOutreMer):
     """Regroupement de différents paramètres du modèle atmosphérique français à aire limitée à haute résolution AROME sur la Réunion-Mayotte.
 
     Champs d’analyse et de prévision en points de grille régulière sur le domaine “Réunion-Mayotte”.
@@ -72,7 +80,7 @@ class AromeOutreMerIndien(Model, HourlyProcess):
     freq_update = 3
 
 
-class AromeOutreMerNouvelleCaledonie(Model, HourlyProcess):
+class AromeOutreMerNouvelleCaledonie(AromeOutreMer):
     """Regroupement de différents paramètres du modèle atmosphérique français à aire limitée à haute résolution AROME sur la Nouvelle-Calédonie.
 
     Champs d’analyse et de prévision en points de grille régulière sur le domaine “Nouvelle-Calédonie”.
@@ -85,7 +93,7 @@ class AromeOutreMerNouvelleCaledonie(Model, HourlyProcess):
     freq_update = 3
 
 
-class AromeOutreMerPolynesie(Model, HourlyProcess):
+class AromeOutreMerPolynesie(AromeOutreMer):
     """Regroupement de différents paramètres du modèle atmosphérique français à aire limitée à haute résolution AROME sur la Polynésie.
 
     Champs d’analyse et de prévision en points de grille régulière sur le domaine “Polynésie”.
