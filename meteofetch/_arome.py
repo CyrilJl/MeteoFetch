@@ -1,7 +1,7 @@
-from ._model import HourlyProcess, Model, MultiHourProcess
+from ._meteo_france import HourlyProcess, MeteoFrance, MultiHourProcess
 
 
-class Arome001(Model, HourlyProcess):
+class Arome001(MeteoFrance, HourlyProcess):
     """Classe pour le modèle AROME à résolution 0.01 degré.
 
     Regroupement de différents paramètres du modèle atmosphérique français à aire limitée et à haute résolution AROME,
@@ -16,7 +16,7 @@ class Arome001(Model, HourlyProcess):
     freq_update = 3
 
 
-class Arome0025(Model, MultiHourProcess):
+class Arome0025(MeteoFrance, MultiHourProcess):
     """Classe pour le modèle AROME à résolution 0.025 degré.
 
     Regroupement de différents paramètres du modèle atmosphérique français à aire limitée et à haute résolution AROME,
@@ -33,7 +33,7 @@ class Arome0025(Model, MultiHourProcess):
     freq_update = 3
 
 
-class AromeOutreMer(Model, HourlyProcess):
+class AromeOutreMer(MeteoFrance, HourlyProcess):
     @classmethod
     def _get_groups(cls, paquet):
         if paquet in ("IP4", "HP3"):

@@ -1,7 +1,7 @@
-from ._model import Model, MultiHourProcess
+from ._meteo_france import MeteoFrance, MultiHourProcess
 
 
-class Arpege01(Model, MultiHourProcess):
+class Arpege01(MeteoFrance, MultiHourProcess):
     """Classe pour le modèle ARPEGE à résolution 0.1 degré.
 
     Regroupement de différents paramètres du modèle français de prévision atmosphérique global Arpège, répartis en plusieurs groupes d’échéances : 00h-12h, 13h-24h, 25h-36h, 37h-48h, 49h-60h, 61h-72h, 73h-84h, 85h-96h et 97h-102h.
@@ -27,7 +27,7 @@ class Arpege01(Model, MultiHourProcess):
     freq_update = 6
 
 
-class Arpege025(Model, MultiHourProcess):
+class Arpege025(MeteoFrance, MultiHourProcess):
     """Classe pour le modèle ARPEGE à résolution 0.25 degré.
 
     Regroupement de différents paramètres du modèle français de prévision atmosphérique global Arpège, répartis en 4 groupes d'échéances : 00h-24h, 25h-48h, 49h-72h et 73h-102h.
