@@ -20,9 +20,14 @@ class Model:
     TIMEOUT = 240
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
     past_runs_ = 8
+    groups_ = ()
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
+
+    @classmethod
+    def _get_groups(cls, paquet):
+        return cls.groups_
 
     @classmethod
     def check_paquet(cls, paquet):
@@ -57,7 +62,10 @@ class Model:
     def _download_paquet(cls, date, paquet, path, num_workers):
         cls.check_paquet(paquet)
 
-        urls = [cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group) for group in cls.groups_]
+        urls = [
+            cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group)
+            for group in cls._get_groups(paquet=paquet)
+        ]
         paths = cls._download_groups(urls, path, num_workers)
         if not all(paths):
             return []
