@@ -17,7 +17,7 @@ from ._misc import geo_encode_cf
 class Model:
     """Classe de base pour le téléchargement et le traitement des données de modèles"""
 
-    TIMEOUT = 240
+    TIMEOUT = 60
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
     past_runs_ = 8
     groups_ = ()
@@ -44,7 +44,7 @@ class Model:
         try:
             temp_path = Path(tempdir) / os.path.basename(url).replace(":", "-")
 
-            with requests.get(url, stream=True) as r:
+            with requests.get(url, stream=True, timeout=cls.TIMEOUT) as r:
                 r.raise_for_status()
                 with open(temp_path, "wb") as f:
                     copyfileobj(r.raw, f, length=1024 * 1024 * 64)
