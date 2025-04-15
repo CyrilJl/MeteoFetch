@@ -28,8 +28,8 @@ html_use_index = False  # Don't create index
 html_domain_indices = False  # Don't need module indices
 html_static_path = ["_static"]
 html_theme_options = {
-    "logo_light": "https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/logo.svg",
-    "logo_dark": "https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/logo.svg",
+    "logo_light": "_static/logo.svg",
+    "logo_dark": "_static/logo.svg",
     "main_nav_links": {"Utilisation": "usage", "Décodage Grib": "grib_defs"},
 }
 pygments_style = "igor"
