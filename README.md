@@ -166,7 +166,6 @@ datasets["t2m"].mean(dim="time").plot(cmap="Spectral_r")
 | mx2t6   | Maximum temperature at 2 metres in the last 6 hours       | K                  | (time, latitude, longitude)                | (36, 721, 1440)       |
 | mn2t6   | Minimum temperature at 2 metres in the last 6 hours       | K                  | (time, latitude, longitude)                | (36, 721, 1440)       |
 
-
 </details>
 
 ### MétéoFrance

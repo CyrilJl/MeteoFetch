@@ -1,5 +1,5 @@
-Décodage GRIB : tables ecCodes et définitions MeteoFrance
-=========================================================
+Décodage GRIB
+=============
 
 Introduction aux fichiers GRIB
 ------------------------------
