@@ -1,17 +1,10 @@
-import os
-from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Pool
-from pathlib import Path
-from shutil import copyfileobj
 from tempfile import TemporaryDirectory
 from typing import Dict
 
-import cfgrib
 import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import geo_encode_cf
 from ._model import Model
 
 
