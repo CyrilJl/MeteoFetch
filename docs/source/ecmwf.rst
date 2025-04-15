@@ -1,55 +1,104 @@
 ECMWF
 =====
- ========= =========================================================== ==================== ============================================ ======================= 
-  Champ     Description                                                 Unités               Dimensions                                   Shape d'un run complet  
- ========= =========================================================== ==================== ============================================ ======================= 
-  tcw       Total column water                                          kg m**-2             (time, latitude, longitude)                  (85, 721, 1440)        
-  tcwv      Total column vertically-integrated water vapour             kg m**-2             (time, latitude, longitude)                  (85, 721, 1440)        
-  fg10      Maximum 10 metre wind gust since previous post-processing   m s**-1              (time, latitude, longitude)                  (67, 721, 1440)        
-  u10       10 metre U wind component                                   m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  v10       10 metre V wind component                                   m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  t2m       2 metre temperature                                         K                    (time, latitude, longitude)                  (85, 721, 1440)        
-  d2m       2 metre dewpoint temperature                                K                    (time, latitude, longitude)                  (85, 721, 1440)        
-  mx2t3     Maximum temperature at 2 metres in the last 3 hours         K                    (time, latitude, longitude)                  (49, 721, 1440)        
-  mn2t3     Minimum temperature at 2 metres in the last 3 hours         K                    (time, latitude, longitude)                  (49, 721, 1440)        
-  u100      100 metre U wind component                                  m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  v100      100 metre V wind component                                  m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  t         Temperature                                                 K                    (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  u         U component of wind                                         m s**-1              (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  v         V component of wind                                         m s**-1              (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  q         Specific humidity                                           kg kg**-1            (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  w         Vertical velocity                                           Pa s**-1             (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  vo        Vorticity (relative)                                        s**-1                (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  d         Divergence                                                  s**-1                (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  gh        Geopotential height                                         gpm                  (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  r         Relative humidity                                           %                    (time, isobaricInhPa, latitude, longitude)   (85, 13, 721, 1440)    
-  msl       Mean sea level pressure                                     Pa                   (time, latitude, longitude)                  (85, 721, 1440)        
-  mucape    Most-unstable CAPE                                          J kg**-1             (time, latitude, longitude)                  (85, 721, 1440)        
-  ttr       Top net long-wave (thermal) radiation                       J m**-2              (time, latitude, longitude)                  (85, 721, 1440)        
-  vsw       Volumetric soil moisture                                    m**3 m**-3           (time, soilLayer, latitude, longitude)       (85, 4, 721, 1440)     
-  sot       Soil temperature                                            K                    (time, soilLayer, latitude, longitude)       (85, 4, 721, 1440)     
-  asn       Snow albedo                                                 (0 - 1)              (time, latitude, longitude)                  (85, 721, 1440)        
-  z         Geopotential                                                m**2 s**-2           (time, latitude, longitude)                  (1, 721, 1440)         
-  sp        Surface pressure                                            Pa                   (time, latitude, longitude)                  (85, 721, 1440)        
-  sdor      Standard deviation of sub-gridscale orography               m                    (time, latitude, longitude)                  (1, 721, 1440)         
-  slor      Slope of sub-gridscale orography                            Numeric              (time, latitude, longitude)                  (1, 721, 1440)         
-  ssrd      Surface short-wave (solar) radiation downwards              J m**-2              (time, latitude, longitude)                  (85, 721, 1440)        
-  lsm       Land-sea mask                                               (0 - 1)              (time, latitude, longitude)                  (85, 721, 1440)        
-  strd      Surface long-wave (thermal) radiation downwards             J m**-2              (time, latitude, longitude)                  (85, 721, 1440)        
-  ssr       Surface net short-wave (solar) radiation                    J m**-2              (time, latitude, longitude)                  (85, 721, 1440)        
-  str       Surface net long-wave (thermal) radiation                   J m**-2              (time, latitude, longitude)                  (85, 721, 1440)        
-  ewss      Time-integrated eastward turbulent surface stress           N m**-2 s            (time, latitude, longitude)                  (85, 721, 1440)        
-  nsss      Time-integrated northward turbulent surface stress          N m**-2 s            (time, latitude, longitude)                  (85, 721, 1440)        
-  ro        Runoff                                                      m                    (time, latitude, longitude)                  (85, 721, 1440)        
-  tp        Total precipitation                                         m                    (time, latitude, longitude)                  (85, 721, 1440)        
-  skt       Skin temperature                                            K                    (time, latitude, longitude)                  (85, 721, 1440)        
-  ptype     Precipitation type                                          (Code table 4.201)   (time, latitude, longitude)                  (85, 721, 1440)        
-  tprate    Total precipitation rate                                    kg m**-2 s**-1       (time, latitude, longitude)                  (85, 721, 1440)        
-  sithick   Sea ice thickness                                           m                    (time, latitude, longitude)                  (85, 721, 1440)        
-  zos       Sea surface height                                          m                    (time, latitude, longitude)                  (85, 721, 1440)        
-  svn       Northward surface sea water velocity                        m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  sve       Eastward surface sea water velocity                         m s**-1              (time, latitude, longitude)                  (85, 721, 1440)        
-  fg310     Maximum 10 metre wind gust in the last 3 hours              m s**-1              (time, latitude, longitude)                  (18, 721, 1440)        
-  mx2t6     Maximum temperature at 2 metres in the last 6 hours         K                    (time, latitude, longitude)                  (36, 721, 1440)        
-  mn2t6     Minimum temperature at 2 metres in the last 6 hours         K                    (time, latitude, longitude)                  (36, 721, 1440)        
- ========= =========================================================== ==================== ============================================ ======================= 
+
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| Champ   | Description                                               | Dimensions                                 | Shape dun run complet | Horizon de prévision |
++=========+===========================================================+============================================+=======================+======================+
+| tcw     | Total column water                                        | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| tcwv    | Total column vertically-integrated water vapour           | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| fg10    | Maximum 10 metre wind gust since previous post-processing | (time, latitude, longitude)                | (67, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| u10     | 10 metre U wind component                                 | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| v10     | 10 metre V wind component                                 | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| t2m     | 2 metre temperature                                       | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| d2m     | 2 metre dewpoint temperature                              | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| mx2t3   | Maximum temperature at 2 metres in the last 3 hours       | (time, latitude, longitude)                | (49, 721, 1440)       | 5 days 21:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| mn2t3   | Minimum temperature at 2 metres in the last 3 hours       | (time, latitude, longitude)                | (49, 721, 1440)       | 5 days 21:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| u100    | 100 metre U wind component                                | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| v100    | 100 metre V wind component                                | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| t       | Temperature                                               | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| u       | U component of wind                                       | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| v       | V component of wind                                       | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| q       | Specific humidity                                         | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| w       | Vertical velocity                                         | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| vo      | Vorticity (relative)                                      | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| d       | Divergence                                                | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| gh      | Geopotential height                                       | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| r       | Relative humidity                                         | (time, isobaricInhPa, latitude, longitude) | (85, 13, 721, 1440)   | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| msl     | Mean sea level pressure                                   | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| mucape  | Most-unstable CAPE                                        | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ttr     | Top net long-wave (thermal) radiation                     | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| vsw     | Volumetric soil moisture                                  | (time, soilLayer, latitude, longitude)     | (85, 4, 721, 1440)    | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| sot     | Soil temperature                                          | (time, soilLayer, latitude, longitude)     | (85, 4, 721, 1440)    | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| asn     | Snow albedo                                               | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| sp      | Surface pressure                                          | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ssrd    | Surface short-wave (solar) radiation downwards            | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| lsm     | Land-sea mask                                             | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| strd    | Surface long-wave (thermal) radiation downwards           | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ssr     | Surface net short-wave (solar) radiation                  | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| str     | Surface net long-wave (thermal) radiation                 | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ewss    | Time-integrated eastward turbulent surface stress         | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| nsss    | Time-integrated northward turbulent surface stress        | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ro      | Runoff                                                    | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| tp      | Total precipitation                                       | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| skt     | Skin temperature                                          | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| ptype   | Precipitation type                                        | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| tprate  | Total precipitation rate                                  | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| sithick | Sea ice thickness                                         | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| zos     | Sea surface height                                        | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| svn     | Northward surface sea water velocity                      | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| sve     | Eastward surface sea water velocity                       | (time, latitude, longitude)                | (85, 721, 1440)       | 15 days 00:00:00     |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| z       | Geopotential                                              | (time, latitude, longitude)                | (1, 721, 1440)        | 0 days 00:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| sdor    | Standard deviation of sub-gridscale orography             | (time, latitude, longitude)                | (1, 721, 1440)        | 0 days 00:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| slor    | Slope of sub-gridscale orography                          | (time, latitude, longitude)                | (1, 721, 1440)        | 0 days 00:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| fg310   | Maximum 10 metre wind gust in the last 3 hours            | (time, latitude, longitude)                | (18, 721, 1440)       | 2 days 03:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| mx2t6   | Maximum temperature at 2 metres in the last 6 hours       | (time, latitude, longitude)                | (36, 721, 1440)       | 8 days 18:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
+| mn2t6   | Minimum temperature at 2 metres in the last 6 hours       | (time, latitude, longitude)                | (36, 721, 1440)       | 8 days 18:00:00      |
++---------+-----------------------------------------------------------+--------------------------------------------+-----------------------+----------------------+
