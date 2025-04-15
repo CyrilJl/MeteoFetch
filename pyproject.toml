@@ -21,6 +21,7 @@ test = ["pytest"]
 
 [project.urls]
 "Homepage" = "https://github.com/CyrilJl/meteofetch"
+"Documentation" = "https://meteofetch.readthedocs.io"
 
 [tool.ruff]
 line-length = 120
