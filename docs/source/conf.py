@@ -32,4 +32,5 @@ html_theme_options = {
     "logo_dark": "_static/logo.svg",
     "main_nav_links": {"Utilisation": "usage", "Décodage Grib": "grib_defs"},
 }
+html_favicon = "_static/logo.png"
 pygments_style = "igor"
