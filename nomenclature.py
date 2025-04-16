@@ -1,6 +1,5 @@
 import pandas as pd
-
-from meteofetch import Arome001, Arome0025, AromeOutreMerAntilles, Arpege01, Arpege025, set_test_mode
+from meteofetch import Arome001, Arome0025, AromeOutreMerAntilles, Arpege01, Arpege025, Ecmwf, set_test_mode
 
 set_test_mode()
 
@@ -26,15 +25,9 @@ for model in (
             )
     print("\n\n\n")
 
-import pandas as pd
-
-from meteofetch import Ecmwf, set_test_mode
-
-set_test_mode()
-
 model = Ecmwf
 print(" Champ | Description | Dimensions | Shape dun run complet | Horizon de prévision |")
-print("--------|----------|----------|----------|-----------------------|")
+print("--------|----------|----------|----------|----------|")
 datasets = model.get_latest_forecast(num_workers=6)
 for k, field in enumerate(datasets):
     ds = datasets[field]
