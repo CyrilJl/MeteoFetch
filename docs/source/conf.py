@@ -12,7 +12,7 @@ author = "Cyril Joly"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = ["sphinx_togglebutton"]
 
 templates_path = ["_templates"]
 exclude_patterns = []
@@ -30,7 +30,7 @@ html_static_path = ["_static"]
 html_theme_options = {
     "logo_light": "_static/logo.svg",
     "logo_dark": "_static/logo.svg",
-    "main_nav_links": {"Utilisation": "usage", "Décodage Grib": "grib_defs"},
+    "main_nav_links": {"Utilisation": "usage", "Modèles": "models","Décodage Grib": "grib_defs"},
 }
 html_favicon = "_static/logo.png"
 pygments_style = "igor"
