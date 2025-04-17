@@ -4,6 +4,9 @@ Arome
 Arome001
 --------
 
+.. image:: /_static/domain_Arome001.png
+   :width: 600px
+
 +--------+----------+-------------------------------------------------------------+------------------------------------------------+-----------------------+----------------------+
 | Paquet |  Champ   |                         Description                         |                   Dimensions                   | Shape dun run complet | Horizon de prévision |
 +========+==========+=============================================================+================================================+=======================+======================+
@@ -69,6 +72,9 @@ Arome001
 
 Arome025
 --------
+
+.. image:: /_static/domain_Arome0025.png
+   :width: 600px
 
 +--------+----------+----------------------------------------------------------------+-------------------------------------------------+-----------------------+----------------------+
 | Paquet |  Champ   |                          Description                           |                   Dimensions                    | Shape dun run complet | Horizon de prévision |
@@ -258,6 +264,23 @@ Arome025
 
 AromeOutreMer*
 --------------
+
+Les modèles OutreMer ont la même nomenclature, et couvrent plusieurs domaines :
+
+.. image:: /_static/domain_AromeOutreMerAntilles.png
+   :width: 600px
+
+.. image:: /_static/domain_AromeOutreMerGuyane.png
+   :width: 600px
+
+.. image:: /_static/domain_AromeOutreMerIndien.png
+   :width: 600px
+
+.. image:: /_static/domain_AromeOutreMerNouvelleCaledonie.png
+   :width: 600px
+
+.. image:: /_static/domain_AromeOutreMerPolynesie.png
+   :width: 600px
 
 +--------+----------+----------------------------------------------------------------+-------------------------------------------------+-----------------------+----------------------+
 | Paquet |  Champ   |                          Description                           |                   Dimensions                    | Shape dun run complet | Horizon de prévision |
