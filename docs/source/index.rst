@@ -27,8 +27,6 @@ Ou bien depuis conda-forge :
    :hidden:
    
    usage
-   arome
-   arpege
-   ecmwf
+   models
    grib_defs
 
