@@ -71,7 +71,7 @@ class Model:
 
         # Concaténer les résultats pour chaque champ
         for field in ret:
-            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
+            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override").sortby("time")
             ret[field] = geo_encode_cf(ret[field])
 
         return ret
