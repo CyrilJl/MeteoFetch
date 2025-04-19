@@ -7,7 +7,6 @@ from tempfile import TemporaryDirectory
 from typing import Dict
 
 import cfgrib
-import pandas as pd
 import requests
 import xarray as xr
 
