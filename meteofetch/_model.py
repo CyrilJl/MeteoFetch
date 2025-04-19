@@ -58,7 +58,7 @@ class Model:
 
         with Pool(processes=num_workers) as pool:
             # Traiter les fichiers en parallèle et recevoir les résultats au fur et à mesure
-            for datasets in pool.imap_unordered(cls._read_grib, paths):
+            for datasets in pool.imap(cls._read_grib, paths):
                 for ds in datasets:
                     for field in ds.data_vars:
                         if variables and field not in variables:
@@ -71,7 +71,7 @@ class Model:
 
         # Concaténer les résultats pour chaque champ
         for field in ret:
-            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override").sortby("time")
+            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
             ret[field] = geo_encode_cf(ret[field])
 
         return ret
