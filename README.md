@@ -14,7 +14,7 @@
 
 ``MeteoFetch`` est un client python qui permet de récupérer **sans clé d'API** les dernières prévisions de :
 
-- MétéoFrance : Arome (0.025°, 0.01°, et les cinq domaines Outre-Mer) et Arpege (0.25° et 0.1°) : plus de précisions sur <https://meteo.data.gouv.fr>
+- MétéoFrance : Arome (0.025°, 0.01°, et les cinq domaines Outre-Mer), Arpege (0.25° et 0.1°) et modèle de vague MFWAM (0,025° et 0.1°): plus de précisions sur <https://meteo.data.gouv.fr>
 - l'ECMWF : IFS, chaîne ``ope``, deux runs par jour : plus de précisions sur <https://www.ecmwf.int/en/forecasts/datasets/open-data>
 
 L'utilisateur peut choisir de :

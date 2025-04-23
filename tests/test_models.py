@@ -3,6 +3,8 @@ from gc import collect
 import pytest
 
 from meteofetch import (
+    MFWAM0025,
+    MFWAM01,
     Arome001,
     Arome0025,
     AromeOutreMerAntilles,
@@ -29,6 +31,8 @@ MODELS = (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
+    MFWAM0025,
+    MFWAM01,
 )
 
 # Limiter le nombre de groupes pour tous les modèles
