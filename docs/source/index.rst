@@ -22,6 +22,10 @@ Ou bien depuis conda-forge :
 
    mamba install -y meteofetch
 
+``meteofetch`` couvre actuellements les modèles Arome, Arpege et MFWAM (modèle de
+vagues) de Météo France, ainsi que le modèle IFS de l'ECMWF (tous les produits ne
+sont pas encore couverts, des développements sont à venir).
+
 .. toctree::
    :maxdepth: 1
    :hidden:
