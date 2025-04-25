@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
+from ._misc import is_downloadable
 from ._model import Model
 
 
@@ -26,13 +27,18 @@ class MeteoFrance(Model):
             raise ValueError(f"Le paquet doit être un des suivants : {cls.paquets_}")
 
     @classmethod
-    def _download_paquet(cls, date, paquet, path, num_workers):
-        cls.check_paquet(paquet)
-
+    def _get_urls(cls, paquet, date) -> list:
         urls = [
             cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group)
             for group in cls._get_groups(paquet=paquet)
         ]
+        return urls
+
+    @classmethod
+    def _download_paquet(cls, date, paquet, path, num_workers):
+        cls.check_paquet(paquet)
+
+        urls = cls._get_urls(paquet=paquet, date=date)
         paths = cls._download_urls(urls, path, num_workers)
         if not all(paths):
             return []
@@ -76,6 +82,17 @@ class MeteoFrance(Model):
                 return paths
 
     @classmethod
+    def get_latest_forecast_time(cls, paquet):
+        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
+        for k in range(cls.past_runs_):
+            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+            urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
+            downloadable = all([is_downloadable(url) for url in urls])
+            if downloadable:
+                return date
+        return False
+
+    @classmethod
     def get_latest_forecast(
         cls,
         paquet="SP1",
@@ -105,12 +122,10 @@ class MeteoFrance(Model):
             requests.HTTPError: Si aucun paquet valide n'a été trouvé parmi les cls.past_runs_ derniers runs.
         """
         cls.check_paquet(paquet)
-        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
-
-        for k in range(cls.past_runs_):
-            current_date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+        date = cls.get_latest_forecast_time(paquet=paquet)
+        if date:
             ret = cls.get_forecast(
-                date=current_date,
+                date=date,
                 paquet=paquet,
                 variables=variables,
                 path=path,
@@ -119,7 +134,6 @@ class MeteoFrance(Model):
             )
             if ret:
                 return ret
-
         raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
 
 

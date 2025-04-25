@@ -7,10 +7,8 @@ from pathlib import Path
 from typing import Literal
 
 import eccodes
+import requests
 import xarray as xr
-
-sources = Literal["eccodes", "meteofrance"]
-
 
 CRS_WKT = """
             GEOGCRS[
@@ -83,7 +81,7 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     return da
 
 
-def set_grib_defs(source: sources):
+def set_grib_defs(source: Literal["eccodes", "meteofrance"]):
     current_path = os.environ.get("ECCODES_DEFINITION_PATH")
 
     if source == "eccodes":
@@ -105,3 +103,27 @@ def set_grib_defs(source: sources):
 def set_test_mode():
     os.environ["meteofetch_test_mode"] = "1"
     print("Mode test activé. Les données des xr.DataArrays sont transformés en booléens par isnull().")
+
+
+def is_downloadable(url) -> bool:
+    try:
+        h = requests.head(url, allow_redirects=True, timeout=10)
+        # Vérifier le code de statut
+        if not h.status_code == 200:
+            return False
+        # Vérifier le Content-Type - exclure les pages HTML par exemple
+        content_type = h.headers.get("Content-Type", "")
+        if "text/html" in content_type.lower():
+            return False
+        # Vérifier Content-Length (optionnel)
+        content_length = h.headers.get("Content-Length")
+        if content_length and int(content_length) > 0:
+            return True
+        # Si Content-Length n'est pas disponible, on se base sur Content-Disposition
+        content_disposition = h.headers.get("Content-Disposition", "")
+        if "attachment" in content_disposition.lower() or "filename" in content_disposition.lower():
+            return True
+        return True
+
+    except requests.exceptions.RequestException:
+        return False
