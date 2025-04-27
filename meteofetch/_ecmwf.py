@@ -81,7 +81,7 @@ class Ecmwf(Model):
         num_workers: int = 4,
     ) -> Dict[str, xr.DataArray]:
         """Récupère les dernières prévisions disponibles parmi les runs récents."""
-        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
+        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
 
         for k in range(cls.past_runs_):
             current_date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)

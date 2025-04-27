@@ -83,7 +83,7 @@ class MeteoFrance(Model):
 
     @classmethod
     def get_latest_forecast_time(cls, paquet):
-        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
+        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
         for k in range(cls.past_runs_):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
             urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
