@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 from typing import Dict
 
@@ -5,6 +6,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
+from ._misc import is_downloadable
 from ._model import Model
 
 
@@ -26,12 +28,17 @@ class Ecmwf(Model):
         return ds
 
     @classmethod
-    def _download_paquet(cls, date, path, num_workers):
-        """Télécharge les fichiers pour un paquet donné."""
+    def _get_urls(cls, date) -> list:
+        """Génère les URLs pour télécharger les fichiers GRIB2."""
         date_dt = pd.to_datetime(date)
         ymd, hour = f"{date_dt:%Y%m%d}", f"{date_dt:%H}"
-
         urls = [cls.base_url_ + "/" + cls.url_.format(ymd=ymd, hour=hour, group=group) for group in cls.groups_]
+        return urls
+
+    @classmethod
+    def _download_paquet(cls, date, path, num_workers):
+        """Télécharge les fichiers pour un paquet donné."""
+        urls = cls._get_urls(date=date)
         paths = cls._download_urls(urls, path, num_workers)
         if not all(paths):
             return []
@@ -73,6 +80,26 @@ class Ecmwf(Model):
                 return paths
 
     @classmethod
+    def get_latest_forecast_time(cls) -> pd.Timestamp:
+        """Trouve l'heure de prévision la plus récente disponible parmi les runs récents.
+
+        Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
+        et retourne le premier run dont toutes les URLs sont accessibles.
+
+        Returns:
+            pd.Timestamp or False: Timestamp du run valide le plus récent, ou False si aucun run valide n'a été trouvé.
+        """
+        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
+        for k in range(cls.past_runs_):
+            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+            urls = cls._get_urls(date=date)
+            with ThreadPoolExecutor() as executor:
+                downloadables = list(executor.map(is_downloadable, urls))
+            if all(downloadables):
+                return date
+        return False
+
+    @classmethod
     def get_latest_forecast(
         cls,
         variables=None,
@@ -81,12 +108,10 @@ class Ecmwf(Model):
         num_workers: int = 4,
     ) -> Dict[str, xr.DataArray]:
         """Récupère les dernières prévisions disponibles parmi les runs récents."""
-        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
-
-        for k in range(cls.past_runs_):
-            current_date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+        date = cls.get_latest_forecast_time()
+        if date:
             ret = cls.get_forecast(
-                date=current_date,
+                date=date,
                 variables=variables,
                 path=path,
                 return_data=return_data,
@@ -94,5 +119,4 @@ class Ecmwf(Model):
             )
             if ret:
                 return ret
-
         raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
