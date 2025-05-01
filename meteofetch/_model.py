@@ -56,7 +56,7 @@ class Model:
         Dans ce cas, on utilise grib_copy pour diviser le fichier en gribs
         contenant chacun une seule variable
         """
-        kw = dict(path=path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
+        kw = dict(backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
         if system() == "Windows" and getsize(path) >= 2**31:
             file_name = basename(path).split(".")[0]
             path_split = Path(path).parent / f"split_{file_name}_[shortName].grib2"
@@ -66,14 +66,14 @@ class Model:
                 Path(path).unlink()
                 paths = glob(str(Path(path).parent / f"split_{file_name}_*.grib2"))
                 datasets = []
-                for path in paths:
-                    datasets.append(cfgrib.open_dataset(**kw))
+                for path_variable in paths:
+                    datasets.append(cfgrib.open_dataset(path=path_variable, **kw))
                 return datasets
             except CalledProcessError:
                 raise
         else:
             # Cas le plus courant
-            return cfgrib.open_datasets(**kw)
+            return cfgrib.open_datasets(path=path**kw)
 
     @classmethod
     def _read_multiple_gribs(cls, paths, variables, num_workers) -> Dict[str, xr.DataArray]:
