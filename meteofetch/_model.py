@@ -1,10 +1,14 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
+from glob import glob
 from multiprocessing import Pool
+from os.path import basename, getsize
 from pathlib import Path
+from platform import system
 from shutil import copyfileobj
+from subprocess import CalledProcessError, run
 from tempfile import TemporaryDirectory
-from typing import Dict
+from typing import Dict, List
 
 import cfgrib
 import requests
@@ -47,8 +51,28 @@ class Model:
         return list(paths)
 
     @classmethod
-    def _read_grib(cls, path):
-        return cfgrib.open_datasets(path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
+    def _read_grib(cls, path) -> List[xr.Dataset]:
+        """cfgrib ne gère pas les fichiers de plus de 2 Go sur Windows:
+        Dans ce cas, on utilise grib_copy pour diviser le fichier en gribs
+        contenant chacun une seule variable
+        """
+        kw = dict(path=path, backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
+        if system() == "Windows" and getsize(path) >= 2**31:
+            file_name = basename(path).split(".")[0]
+            path_split = Path(path).parent / f"split_{file_name}_[shortName].grib2"
+            command = f"grib_copy {path} {path_split.resolve()}"
+            try:
+                run(command, shell=True, check=True)
+                paths = glob(str(Path(path).parent / f"split_{file_name}_*.grib2"))
+                datasets = []
+                for path in paths:
+                    datasets.append(cfgrib.open_dataset(**kw))
+                return datasets
+            except CalledProcessError:
+                raise
+        else:
+            # Cas le plus courant
+            return cfgrib.open_datasets(**kw)
 
     @classmethod
     def _read_multiple_gribs(cls, paths, variables, num_workers) -> Dict[str, xr.DataArray]:
