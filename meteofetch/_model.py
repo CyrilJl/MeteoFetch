@@ -62,7 +62,8 @@ class Model:
             path_split = Path(path).parent / f"split_{file_name}_[shortName].grib2"
             command = f"grib_copy {path} {path_split.resolve()}"
             try:
-                run(command, shell=True, check=True)
+                run(command, check=True)
+                Path(path).unlink()
                 paths = glob(str(Path(path).parent / f"split_{file_name}_*.grib2"))
                 datasets = []
                 for path in paths:
