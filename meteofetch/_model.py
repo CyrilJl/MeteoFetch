@@ -73,7 +73,7 @@ class Model:
                 raise
         else:
             # Cas le plus courant
-            return cfgrib.open_datasets(path=path**kw)
+            return cfgrib.open_datasets(path=path, **kw)
 
     @classmethod
     def _read_multiple_gribs(cls, paths, variables, num_workers) -> Dict[str, xr.DataArray]:
