@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 from typing import Dict
 
@@ -6,7 +5,7 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import is_downloadable
+from ._misc import are_downloadable
 from ._model import Model
 
 
@@ -83,25 +82,32 @@ class MeteoFrance(Model):
                 return paths
 
     @classmethod
-    def get_latest_forecast_time(cls, paquet="SP1") -> pd.Timestamp:
-        """Trouve l'heure de prévision la plus récente disponible parmi les runs récents.
-
-        Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
-        et retourne le premier run dont toutes les URLs sont accessibles.
-
-        Args:
-            paquet (str): Le paquet de données à vérifier (doit faire partie de cls.paquets_).
-
-        Returns:
-            pd.Timestamp or False: Timestamp du run valide le plus récent, ou False si aucun run valide n'a été trouvé.
-        """
+    def availability_paquet(cls, paquet):
         latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
+        index, ret = [], []
+        for k in range(cls.past_runs_):
+            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+            index.append(date)
+            urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
+            downloadable = are_downloadable(urls)
+            ret.append(downloadable)
+        return pd.Series(ret, index=index, name=paquet)
+
+    @classmethod
+    def availability(cls):
+        ret = []
+        for paquet in cls.paquets_:
+            ret.append(cls.availability_paquet(paquet=paquet))
+        return pd.concat(ret, axis=1)
+
+    @classmethod
+    def get_latest_forecast_time(cls, paquet):
+        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
         for k in range(cls.past_runs_):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
             urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
-            with ThreadPoolExecutor() as executor:
-                downloadables = list(executor.map(is_downloadable, urls))
-            if all(downloadables):
+            downloadable = are_downloadable(urls)
+            if downloadable:
                 return date
         return False
 
