@@ -3,6 +3,7 @@ The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import
 """
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Literal
 
@@ -127,3 +128,9 @@ def is_downloadable(url) -> bool:
 
     except requests.exceptions.RequestException:
         return False
+
+
+def are_downloadable(urls) -> bool:
+    with ThreadPoolExecutor() as executor:
+        results = list(executor.map(is_downloadable, urls))
+    return all(results)
