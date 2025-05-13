@@ -71,6 +71,7 @@ def test_meteo_france_models_with_grib_defs(grib_def, model):
     # Configurer les définitions GRIB
     set_grib_defs(grib_def)
     print(f"\nTesting {model.__name__} with {grib_def} definitions")
+    print(model.availability())
 
     for paquet in model.paquets_:
         print(f"\nModel: {model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
