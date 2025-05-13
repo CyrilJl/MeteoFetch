@@ -82,22 +82,22 @@ class MeteoFrance(Model):
                 return paths
 
     @classmethod
-    def availability_paquet(cls, paquet):
+    def availability_paquet(cls, paquet, return_date=False):
         latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
         index, ret = [], []
         for k in range(cls.past_runs_):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
             index.append(date)
             urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
-            downloadable = are_downloadable(urls)
+            downloadable = are_downloadable(urls, return_date=return_date)
             ret.append(downloadable)
         return pd.Series(ret, index=index, name=paquet)
 
     @classmethod
-    def availability(cls):
+    def availability(cls, return_date=False):
         ret = []
         for paquet in cls.paquets_:
-            ret.append(cls.availability_paquet(paquet=paquet))
+            ret.append(cls.availability_paquet(paquet=paquet, return_date=return_date))
         return pd.concat(ret, axis=1)
 
     @classmethod

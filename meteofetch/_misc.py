@@ -4,6 +4,7 @@ The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import
 
 import os
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
@@ -106,31 +107,79 @@ def set_test_mode():
     print("Mode test activé. Les données des xr.DataArrays sont transformés en booléens par isnull().")
 
 
-def is_downloadable(url) -> bool:
+def is_downloadable(url, return_date=False):
     try:
         h = requests.head(url, allow_redirects=True, timeout=10)
+
         # Vérifier le code de statut
         if not h.status_code == 200:
             return False
+
         # Vérifier le Content-Type - exclure les pages HTML par exemple
         content_type = h.headers.get("Content-Type", "")
         if "text/html" in content_type.lower():
             return False
+
         # Vérifier Content-Length (optionnel)
         content_length = h.headers.get("Content-Length")
         if content_length and int(content_length) > 0:
-            return True
+            if return_date:
+                # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
+                last_modified = h.headers.get("Last-Modified")
+                if last_modified:
+                    # Convertir la date en objet datetime
+                    date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+                    return date
+                else:
+                    return False
+            else:
+                return True
+
         # Si Content-Length n'est pas disponible, on se base sur Content-Disposition
         content_disposition = h.headers.get("Content-Disposition", "")
         if "attachment" in content_disposition.lower() or "filename" in content_disposition.lower():
+            if return_date:
+                # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
+                last_modified = h.headers.get("Last-Modified")
+                if last_modified:
+                    # Convertir la date en objet datetime
+                    date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+                    return date
+                else:
+                    return False
+            else:
+                return True
+
+        if return_date:
+            # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
+            last_modified = h.headers.get("Last-Modified")
+            if last_modified:
+                # Convertir la date en objet datetime
+                date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+                return date
+            else:
+                return False
+        else:
             return True
-        return True
 
     except requests.exceptions.RequestException:
         return False
 
 
-def are_downloadable(urls) -> bool:
+def are_downloadable(urls, return_date=False):
     with ThreadPoolExecutor() as executor:
-        results = list(executor.map(is_downloadable, urls))
-    return all(results)
+        # Utiliser executor.map pour appliquer la fonction is_downloadable à chaque URL
+        results = list(executor.map(lambda url: is_downloadable(url, return_date), urls))
+
+    if return_date:
+        # Filtrer les résultats pour obtenir uniquement les dates valides
+        valid_dates = [result for result in results if isinstance(result, datetime)]
+        # Vérifier si toutes les URLs sont téléchargeables et si des dates valides sont présentes
+        if len(valid_dates) == len(urls):
+            # Renvoie la date maximale
+            return max(valid_dates)
+        else:
+            return False
+    else:
+        # Renvoie True si toutes les URLs sont téléchargeables, False sinon
+        return all(results)
