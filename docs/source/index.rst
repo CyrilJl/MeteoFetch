@@ -6,11 +6,11 @@ disponibles en open data **sans clé d'API**. La plus-value de ce package est la
 des fichiers grib sur disque ou chargement en mémoire des champs souhaités sous forme de ``xr.DataArray``), ainsi que cette documentation
 qui propose une description des champs qui sont requêtables pour chaque modèle.
 
-``meteofetch`` s'installe facilement depuis Pypi :
+``meteofetch`` s'installe facilement depuis PyPI :
 
 .. code-block:: console
 
-   pip install pypi
+   pip install meteofetch
 
 Ou bien depuis conda-forge :
 
