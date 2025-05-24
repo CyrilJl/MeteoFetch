@@ -116,7 +116,7 @@ datasets["t2m"].mean(dim="time").plot(cmap="Spectral_r")
 ```
 ![output_code_3](https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/plot_map_indien.png)
 
-Vous pouvez également combiner ``meteofetch`` avec ``mapflow``, ma librairie de visualisation de cartes :
+Vous pouvez également combiner ``meteofetch`` avec ``mapflow``, ma [librairie de visualisation de cartes](https://github.com/CyrilJl/mapflow) :
 
 ```python
 from mapflow import animate
