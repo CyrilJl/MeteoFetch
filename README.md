@@ -114,8 +114,19 @@ from meteofetch import (
 datasets = AromeOutreMerIndien.get_latest_forecast(paquet="SP1")
 datasets["t2m"].mean(dim="time").plot(cmap="Spectral_r")
 ```
-
 ![output_code_3](https://raw.githubusercontent.com/CyrilJl/MeteoFetch/main/_static/plot_map_indien.png)
+
+Vous pouvez également combiner ``meteofetch`` avec ``mapflow``, ma librairie de visualisation de cartes :
+
+```python
+from mapflow import animate
+from meteofetch import Arome0025
+
+datasets = Arome0025.get_latest_forecast(paquet="SP1")
+animate(da=datasets['t2m'], path="run_t2m.mp4")
+```
+
+https://github.com/user-attachments/assets/ad9667f8-f5e6-4e2e-9b7c-cf5770945c42
 
 ``meteofetch`` permet également de charger les fichiers gribs de la prévision souhaitée à l'endroit où le souhaite l'utilisateur.
 
