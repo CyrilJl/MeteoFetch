@@ -1,0 +1,28 @@
+name: Format with Ruff
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run ruff format
+        run: ruff format .
+
+      - name: Commit changes
+        if: success()
+        run: |
+          git diff --quiet || (git add . && \
+          git -c user.name="GitHub Actions" \
+              -c user.email="actions@github.com" \
+              commit -m "Format code with Ruff" && \
+          git push)
