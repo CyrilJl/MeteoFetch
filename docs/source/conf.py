@@ -23,6 +23,7 @@ language = "fr"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinxawesome_theme"
+html_permalinks = False
 html_title = project
 html_use_index = False  # Don't create index
 html_domain_indices = False  # Don't need module indices
