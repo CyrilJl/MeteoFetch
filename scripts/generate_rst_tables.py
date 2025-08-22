@@ -13,9 +13,9 @@ from meteofetch import (
 set_test_mode()
 
 
-def print_rst_table(header, data):
+def generate_rst_table(header, data):
     """
-    Prints a list of lists as a reStructuredText grid table.
+    Generates a reStructuredText grid table as a string.
     """
     # Calculate column widths
     column_widths = [len(h) for h in header]
@@ -24,23 +24,26 @@ def print_rst_table(header, data):
             if len(str(cell)) > column_widths[i]:
                 column_widths[i] = len(str(cell))
 
-    # Print table header
+    # Build table header
     header_line = "+" + "+".join(["-" * (w + 2) for w in column_widths]) + "+"
-    print(header_line)
     header_row = "| " + " | ".join([h.ljust(w) for h, w in zip(header, column_widths)]) + " |"
-    print(header_row)
-    print(header_line.replace("-", "="))
-
-    # Print table data
+    separator_line = header_line.replace("-", "=")
+    
+    # Build table content
+    table_content = [header_line, header_row, separator_line]
+    
+    # Add table data
     for row in data:
         data_row = "| " + " | ".join([str(c).ljust(w) for c, w in zip(row, column_widths)]) + " |"
-        print(data_row)
-        print(header_line)
+        table_content.append(data_row)
+        table_content.append(header_line)
+    
+    return "\n".join(table_content)
 
 
 def generate_tables():
     """
-    Generates and prints RST tables for weather models.
+    Generates RST tables for weather models and saves to a file.
     """
     models = [
         Arome001,
@@ -50,9 +53,12 @@ def generate_tables():
         Arpege025,
     ]
 
+    rst_content = []
+    
     for model in models:
-        print(f"{model.__name__}")
-        print("-" * len(model.__name__))
+        rst_content.append(f"{model.__name__}")
+        rst_content.append("-" * len(model.__name__))
+        rst_content.append("")
 
         header = ["Paquet", "Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
         table_data = []
@@ -74,16 +80,22 @@ def generate_tables():
                     ]
                     table_data.append(row)
             except Exception as e:
-                print(f"Could not fetch data for {model.__name__} - {paquet}: {e}")
+                rst_content.append(f"Could not fetch data for {model.__name__} - {paquet}: {e}")
+                rst_content.append("")
 
-        print_rst_table(header, table_data)
-        print("\n\n")
+        if table_data:
+            rst_content.append(generate_rst_table(header, table_data))
+        rst_content.append("")
+        rst_content.append("")
 
     # Special case for Ecmwf
-    print("Ecmwf")
-    print("-----")
+    rst_content.append("Ecmwf")
+    rst_content.append("-----")
+    rst_content.append("")
+    
     header_ecmwf = ["Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
     table_data_ecmwf = []
+    
     try:
         datasets = Ecmwf.get_latest_forecast(num_workers=6)
         for field in datasets:
@@ -97,9 +109,18 @@ def generate_tables():
                 str(pd.to_timedelta(ds['time'].max().item() - ds['time'].min().item())),
             ]
             table_data_ecmwf.append(row)
-        print_rst_table(header_ecmwf, table_data_ecmwf)
+        
+        if table_data_ecmwf:
+            rst_content.append(generate_rst_table(header_ecmwf, table_data_ecmwf))
     except Exception as e:
-        print(f"Could not fetch data for Ecmwf: {e}")
+        rst_content.append(f"Could not fetch data for Ecmwf: {e}")
+        rst_content.append("")
+
+    # Save to file
+    with open("weather_models_tables.rst", "w", encoding="utf-8") as f:
+        f.write("\n".join(rst_content))
+    
+    print("Tables saved to weather_models_tables.rst")
 
 
 if __name__ == "__main__":
