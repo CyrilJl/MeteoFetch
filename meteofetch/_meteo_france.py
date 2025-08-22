@@ -94,14 +94,27 @@ class MeteoFrance(Model):
         return pd.Series(ret, index=index, name=paquet)
 
     @classmethod
-    def availability(cls, return_date=False):
+    def availability(cls, return_date=False) -> pd.DataFrame:
+        """Vérifie la disponibilité des paquets pour les derniers runs.
+
+        Returns:
+            pd.DataFrame: DataFrame avec les paquets en colonnes et les dates de run en index.
+        """
         ret = []
         for paquet in cls.paquets_:
             ret.append(cls.availability_paquet(paquet=paquet, return_date=return_date))
         return pd.concat(ret, axis=1)
 
     @classmethod
-    def get_latest_forecast_time(cls, paquet):
+    def get_latest_forecast_time(cls, paquet: str) -> pd.Timestamp:
+        """Récupère la date du dernier run disponible pour un paquet donné.
+
+        Args:
+            paquet (str): Le paquet pour lequel vérifier la disponibilité.
+
+        Returns:
+            pd.Timestamp: La date du dernier run disponible.
+        """
         latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
         for k in range(cls.past_runs_):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)

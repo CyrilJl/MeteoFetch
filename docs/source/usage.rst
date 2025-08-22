@@ -35,20 +35,38 @@ Utilisation
 
 
 
-Vous pouvez également appeler la méthode ``availability``, pour avoir une meilleure idée de la disponibilité des derniers runs :
+Disponibilité
+=============
+
+Il est possible de vérifier la disponibilité des derniers runs de prévision pour un modèle donné.
 
 .. code-block:: python
 
-  from meteofetch import Arpege025
+  from meteofetch import Arome0025
 
-  Arpege025.availability()
+  Arome0025.availability()
 
-  #                        SP1    SP2    IP1    IP2    IP3    IP4    HP1    HP2
-  # 2025-05-13 12:00:00  False  False  False  False  False  False  False  False
-  # 2025-05-13 06:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-13 00:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-12 18:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-12 12:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-12 06:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-12 00:00:00   True   True   True   True   True   True   True   True
-  # 2025-05-11 18:00:00   True   True   True   True   True   True   True   True
+.. code-block:: text
+
+  |                     |   SP1 |   SP2 |   SP3 |   IP1 |   IP2 |   IP3 |   IP4 |   IP5 |   HP1 |   HP2 |   HP3 |
+  |:--------------------|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|
+  | 2024-05-21 18:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 15:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 12:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 09:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 06:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 03:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-21 00:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+  | 2024-05-20 21:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+
+Ou de récupérer la date du dernier run de prévision disponible pour un paquet donné.
+
+.. code-block:: python
+
+  from meteofetch import Arome0025
+
+  Arome0025.get_latest_forecast_time(paquet="SP1")
+
+.. code-block:: text
+
+  Timestamp('2024-05-21 18:00:00+0000', tz='UTC')

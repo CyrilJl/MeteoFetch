@@ -53,6 +53,43 @@ datasets = Arome0025.get_latest_forecast(paquet='SP3')
 datasets['ssr']
 ```
 
+# Disponibilité
+
+Il est possible de vérifier la disponibilité des derniers runs de prévision pour un modèle donné.
+
+```python
+from meteofetch import Arome0025
+
+Arome0025.availability()
+```
+
+<div align="center">
+
+|                     |   SP1 |   SP2 |   SP3 |   IP1 |   IP2 |   IP3 |   IP4 |   IP5 |   HP1 |   HP2 |   HP3 |
+|:--------------------|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|------:|
+| 2024-05-21 18:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 15:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 12:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 09:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 06:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 03:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-21 00:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+| 2024-05-20 21:00:00 |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |  True |
+
+</div>
+
+Ou de récupérer la date du dernier run de prévision disponible pour un paquet donné.
+
+```python
+from meteofetch import Arome0025
+
+Arome0025.get_latest_forecast_time(paquet="SP1")
+```
+
+```text
+Timestamp('2024-05-21 18:00:00+0000', tz='UTC')
+```
+
 Par défaut, ``meteofetch`` sert à l'utilisateur toutes les variables contenues dans le paquet requêté.
 Il est cependant conseillée de préciser les variables voulues pour limiter l'usage mémoire :
 
