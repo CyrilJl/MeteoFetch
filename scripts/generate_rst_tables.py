@@ -28,16 +28,16 @@ def generate_rst_table(header, data):
     header_line = "+" + "+".join(["-" * (w + 2) for w in column_widths]) + "+"
     header_row = "| " + " | ".join([h.ljust(w) for h, w in zip(header, column_widths)]) + " |"
     separator_line = header_line.replace("-", "=")
-    
+
     # Build table content
     table_content = [header_line, header_row, separator_line]
-    
+
     # Add table data
     for row in data:
         data_row = "| " + " | ".join([str(c).ljust(w) for c, w in zip(row, column_widths)]) + " |"
         table_content.append(data_row)
         table_content.append(header_line)
-    
+
     return "\n".join(table_content)
 
 
@@ -54,13 +54,21 @@ def generate_tables():
     ]
 
     rst_content = []
-    
+
     for model in models:
         rst_content.append(f"{model.__name__}")
         rst_content.append("-" * len(model.__name__))
         rst_content.append("")
 
-        header = ["Paquet", "Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
+        header = [
+            "Paquet",
+            "Champ",
+            "Description",
+            "Unité",
+            "Dimensions",
+            "Shape dun run complet",
+            "Horizon de prévision",
+        ]
         table_data = []
 
         for paquet in model.paquets_:
@@ -72,11 +80,11 @@ def generate_tables():
                     row = [
                         paquet_name,
                         field,
-                        ds.attrs.get('long_name', 'N/A'),
-                        ds.attrs.get('units', 'N/A'),
+                        ds.attrs.get("long_name", "N/A"),
+                        ds.attrs.get("units", "N/A"),
                         str(tuple(ds.dims)),
                         str(ds.shape),
-                        str(pd.to_timedelta(ds['time'].max().item() - ds['time'].min().item())),
+                        str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
                     ]
                     table_data.append(row)
             except Exception as e:
@@ -92,24 +100,24 @@ def generate_tables():
     rst_content.append("Ecmwf")
     rst_content.append("-----")
     rst_content.append("")
-    
+
     header_ecmwf = ["Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
     table_data_ecmwf = []
-    
+
     try:
         datasets = Ecmwf.get_latest_forecast(num_workers=6)
         for field in datasets:
             ds = datasets[field]
             row = [
                 field,
-                ds.attrs.get('long_name', 'N/A'),
-                ds.attrs.get('units', 'N/A'),
+                ds.attrs.get("long_name", "N/A"),
+                ds.attrs.get("units", "N/A"),
                 str(tuple(ds.dims)),
                 str(ds.shape),
-                str(pd.to_timedelta(ds['time'].max().item() - ds['time'].min().item())),
+                str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
             ]
             table_data_ecmwf.append(row)
-        
+
         if table_data_ecmwf:
             rst_content.append(generate_rst_table(header_ecmwf, table_data_ecmwf))
     except Exception as e:
@@ -119,7 +127,7 @@ def generate_tables():
     # Save to file
     with open("weather_models_tables.rst", "w", encoding="utf-8") as f:
         f.write("\n".join(rst_content))
-    
+
     print("Tables saved to weather_models_tables.rst")
 
 
