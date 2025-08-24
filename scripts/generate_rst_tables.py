@@ -82,7 +82,7 @@ def generate_tables():
                         field,
                         ds.attrs.get("long_name", "N/A"),
                         ds.attrs.get("units", "N/A"),
-                        str(tuple(ds.dims)),
+                        f"({', '.join(ds.dims)})",
                         str(ds.shape),
                         str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
                     ]
@@ -112,7 +112,7 @@ def generate_tables():
                 field,
                 ds.attrs.get("long_name", "N/A"),
                 ds.attrs.get("units", "N/A"),
-                str(tuple(ds.dims)),
+                f"({', '.join(ds.dims)})",
                 str(ds.shape),
                 str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
             ]
