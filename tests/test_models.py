@@ -15,6 +15,7 @@ from meteofetch import (
     Arpege01,
     Arpege025,
     Ecmwf,
+    Aifs,
     set_grib_defs,
     set_test_mode,
 )
@@ -36,7 +37,7 @@ MODELS = (
 )
 
 # Limiter le nombre de groupes pour tous les modèles
-for m in MODELS + (Ecmwf,):
+for m in MODELS + (Ecmwf, Aifs):
     m.groups_ = m.groups_[:2]
 
 # Liste des configurations GRIB à tester
@@ -53,6 +54,18 @@ def model(request):
 @pytest.fixture(params=GRIB_DEFS)
 def grib_def(request):
     return request.param
+
+
+def test_aifs():
+    datasets = Aifs.get_latest_forecast()
+    for field in datasets:
+        print(f"\t{field} - {datasets[field].units}")
+        ds = datasets[field]
+        if "time" in ds.dims:
+            assert ds.time.size > 0, f"Le champ {field} n'a pas de données temporelles."
+        assert ds.mean() < 1, f"Le champ {field} contient trop de valeurs manquantes."
+    del datasets
+    collect()
 
 
 def test_ecmwf():
