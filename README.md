@@ -168,8 +168,8 @@ https://github.com/user-attachments/assets/ad9667f8-f5e6-4e2e-9b7c-cf5770945c42
 ``meteofetch`` permet également de charger les fichiers gribs de la prévision souhaitée à l'endroit où le souhaite l'utilisateur.
 
 ```python
-from meteofetch import Ecmwf
+from meteofetch import Ifs
 
 path = 'your/folder/'
-Ecmwf.get_latest_forecast(path=path, return_data=False)
+Ifs.get_latest_forecast(path=path, return_data=False)
 ```

@@ -11,7 +11,9 @@ from ._model import Model
 
 
 class Aifs(Model):
-    """Classe de récupération des données forecast opérationnelles AIFS
+    """ECMWF’s fully data-driven weather forecast model.
+
+    Classe de récupération des données forecast opérationnelles AIFS
     https://www.ecmwf.int/en/forecasts/datasets/open-data
     """
 

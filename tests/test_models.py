@@ -14,7 +14,7 @@ from meteofetch import (
     AromeOutreMerPolynesie,
     Arpege01,
     Arpege025,
-    Ecmwf,
+    Ifs,
     Aifs,
     set_grib_defs,
     set_test_mode,
@@ -37,7 +37,7 @@ MODELS = (
 )
 
 # Limiter le nombre de groupes pour tous les modèles
-for m in MODELS + (Ecmwf, Aifs):
+for m in MODELS + (Ifs, Aifs):
     m.groups_ = m.groups_[:2]
 
 # Liste des configurations GRIB à tester
@@ -68,8 +68,8 @@ def test_aifs():
     collect()
 
 
-def test_ecmwf():
-    datasets = Ecmwf.get_latest_forecast()
+def test_ifs():
+    datasets = Ifs.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
