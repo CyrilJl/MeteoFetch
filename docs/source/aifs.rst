@@ -7,4 +7,3 @@ https://www.ecmwf.int/en/forecasts/datasets/open-data
 
 .. include:: /weather_models_tables.rst
     :start-after: Aifs
-    :end-before: Ecmwf

@@ -8,7 +8,7 @@ from ._arome import (
     AromeOutreMerPolynesie,
 )
 from ._arpege import Arpege01, Arpege025
-from ._ecmwf import Ecmwf
+from ._ifs import Ifs
 from ._aifs import Aifs
 from ._mfwam import MFWAM0025, MFWAM01
 from ._misc import set_grib_defs, set_test_mode
@@ -23,7 +23,7 @@ __all__ = [
     "AromeOutreMerPolynesie",
     "Arpege01",
     "Arpege025",
-    "Ecmwf",
+    "Ifs",
     "Aifs",
     "MFWAM0025",
     "MFWAM01",

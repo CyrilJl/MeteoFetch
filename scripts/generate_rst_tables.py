@@ -7,7 +7,7 @@ from meteofetch import (
     AromeOutreMerAntilles,
     Arpege01,
     Arpege025,
-    Ecmwf,
+    Ifs,
     set_test_mode,
 )
 
@@ -97,16 +97,16 @@ def generate_tables():
         rst_content.append("")
         rst_content.append("")
 
-    # Special case for Ecmwf
-    rst_content.append("Ecmwf")
-    rst_content.append("-----")
+    # Special case for Ifs
+    rst_content.append("Ifs")
+    rst_content.append("---")
     rst_content.append("")
 
-    header_ecmwf = ["Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
-    table_data_ecmwf = []
+    header_ifs = ["Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
+    table_data_ifs = []
 
     try:
-        datasets = Ecmwf.get_latest_forecast(num_workers=6)
+        datasets = Ifs.get_latest_forecast(num_workers=6)
         for field in datasets:
             ds = datasets[field]
             row = [
@@ -117,12 +117,12 @@ def generate_tables():
                 str(ds.shape),
                 str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
             ]
-            table_data_ecmwf.append(row)
+            table_data_ifs.append(row)
 
-        if table_data_ecmwf:
-            rst_content.append(generate_rst_table(header_ecmwf, table_data_ecmwf))
+        if table_data_ifs:
+            rst_content.append(generate_rst_table(header_ifs, table_data_ifs))
     except Exception as e:
-        rst_content.append(f"Could not fetch data for Ecmwf: {e}")
+        rst_content.append(f"Could not fetch data for Ifs: {e}")
         rst_content.append("")
 
     # Special case for Aifs

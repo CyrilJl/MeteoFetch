@@ -10,7 +10,7 @@ from ._misc import is_downloadable
 from ._model import Model
 
 
-class Ecmwf(Model):
+class Ifs(Model):
     """Classe de récupération des données forecast opérationnelles ECMWF
     https://www.ecmwf.int/en/forecasts/datasets/open-data
     """
