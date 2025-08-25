@@ -1,7 +1,7 @@
 ECMWF
 =====
 
-Le modèle IFS est un modèle global.
+Le modèle IFS est un modèle global. Le modèle AIFS est également disponible.
 
 https://www.ecmwf.int/en/forecasts/datasets/open-data
 

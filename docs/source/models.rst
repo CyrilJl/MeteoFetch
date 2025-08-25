@@ -7,4 +7,5 @@ Modèles
    arome
    arpege
    ecmwf
+   aifs
    mfwam

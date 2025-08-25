@@ -1,6 +1,7 @@
 import pandas as pd
 
 from meteofetch import (
+    Aifs,
     Arome001,
     Arome0025,
     AromeOutreMerAntilles,
@@ -122,6 +123,34 @@ def generate_tables():
             rst_content.append(generate_rst_table(header_ecmwf, table_data_ecmwf))
     except Exception as e:
         rst_content.append(f"Could not fetch data for Ecmwf: {e}")
+        rst_content.append("")
+
+    # Special case for Aifs
+    rst_content.append("Aifs")
+    rst_content.append("----")
+    rst_content.append("")
+
+    header_aifs = ["Champ", "Description", "Unité", "Dimensions", "Shape dun run complet", "Horizon de prévision"]
+    table_data_aifs = []
+
+    try:
+        datasets = Aifs.get_latest_forecast(num_workers=6)
+        for field in datasets:
+            ds = datasets[field]
+            row = [
+                field,
+                ds.attrs.get("long_name", "N/A"),
+                ds.attrs.get("units", "N/A"),
+                str(tuple(ds.dims)),
+                str(ds.shape),
+                str(pd.to_timedelta(ds["time"].max().item() - ds["time"].min().item())),
+            ]
+            table_data_aifs.append(row)
+
+        if table_data_aifs:
+            rst_content.append(generate_rst_table(header_aifs, table_data_aifs))
+    except Exception as e:
+        rst_content.append(f"Could not fetch data for Aifs: {e}")
         rst_content.append("")
 
     # Save to file
