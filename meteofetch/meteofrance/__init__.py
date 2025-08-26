@@ -5,12 +5,42 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import are_downloadable
-from ._model import Model
+from .._misc import are_downloadable
+from .._model import Model
+from .arome import (
+    Arome001,
+    Arome0025,
+    AromeOutreMer,
+    AromeOutreMerAntilles,
+    AromeOutreMerGuyane,
+    AromeOutreMerIndien,
+    AromeOutreMerNouvelleCaledonie,
+    AromeOutreMerPolynesie,
+)
+from .arpege import Arpege01, Arpege025
+from .mfwam import MFWAM0025, MFWAM01
+
+__all__ = [
+    "MeteoFrance",
+    "HourlyProcess",
+    "MultiHourProcess",
+    "Arome001",
+    "Arome0025",
+    "AromeOutreMer",
+    "AromeOutreMerAntilles",
+    "AromeOutreMerGuyane",
+    "AromeOutreMerIndien",
+    "AromeOutreMerNouvelleCaledonie",
+    "AromeOutreMerPolynesie",
+    "Arpege01",
+    "Arpege025",
+    "MFWAM0025",
+    "MFWAM01",
+]
 
 
 class MeteoFrance(Model):
-    """Classe de base pour le téléchargement et le traitement des données de modèles"""
+    """Base class for all Meteo-France models."""
 
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
     past_runs_ = 8

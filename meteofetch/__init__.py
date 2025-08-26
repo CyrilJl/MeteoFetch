@@ -1,22 +1,34 @@
-from ._arome import (
+from . import ecmwf, meteofrance
+from ._misc import set_grib_defs, set_test_mode
+from .ecmwf import ECMWF, Aifs, Ifs
+from .meteofrance import (
+    MeteoFrance,
     Arome001,
     Arome0025,
+    AromeOutreMer,
     AromeOutreMerAntilles,
     AromeOutreMerGuyane,
     AromeOutreMerIndien,
     AromeOutreMerNouvelleCaledonie,
     AromeOutreMerPolynesie,
+    Arpege01,
+    Arpege025,
+    MFWAM0025,
+    MFWAM01,
 )
-from ._arpege import Arpege01, Arpege025
-from ._ecmwf import ECMWF
-from ._ifs import Ifs
-from ._aifs import Aifs
-from ._mfwam import MFWAM0025, MFWAM01
-from ._misc import set_grib_defs, set_test_mode
 
 __all__ = [
+    "ecmwf",
+    "meteofrance",
+    "set_grib_defs",
+    "set_test_mode",
+    "ECMWF",
+    "Aifs",
+    "Ifs",
+    "MeteoFrance",
     "Arome001",
     "Arome0025",
+    "AromeOutreMer",
     "AromeOutreMerAntilles",
     "AromeOutreMerGuyane",
     "AromeOutreMerIndien",
@@ -24,11 +36,6 @@ __all__ = [
     "AromeOutreMerPolynesie",
     "Arpege01",
     "Arpege025",
-    "ECMWF",
-    "Ifs",
-    "Aifs",
     "MFWAM0025",
     "MFWAM01",
-    "set_grib_defs",
-    "set_test_mode",
 ]
