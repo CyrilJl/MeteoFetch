@@ -15,6 +15,7 @@ Disponibilité des modèles
         }
         th {
             background-color: #f2f2f2;
+            text-align: center;
         }
         .status-cell {
             text-align: center;
