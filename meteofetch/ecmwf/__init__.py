@@ -5,12 +5,12 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import are_downloadable
-from ._model import Model
+from .._misc import are_downloadable
+from .._model import Model
 
 
 class ECMWF(Model):
-    """ECMWF parent class for Ifs and Aifs."""
+    """Base class for all ECMWF models."""
 
     base_url_: str
     past_runs_: int

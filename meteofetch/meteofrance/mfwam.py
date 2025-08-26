@@ -1,4 +1,4 @@
-from ._meteo_france import HourlyProcess, MeteoFrance
+from . import HourlyProcess, MeteoFrance
 
 
 class MFWAM(MeteoFrance, HourlyProcess):

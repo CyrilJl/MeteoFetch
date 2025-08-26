@@ -5,12 +5,12 @@ import pandas as pd
 import requests
 import xarray as xr
 
-from ._misc import are_downloadable
-from ._model import Model
+from .._misc import are_downloadable
+from .._model import Model
 
 
 class MeteoFrance(Model):
-    """Classe de base pour le téléchargement et le traitement des données de modèles"""
+    """Base class for all Meteo-France models."""
 
     base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
     past_runs_ = 8
