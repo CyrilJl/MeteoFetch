@@ -7,8 +7,6 @@ import xarray as xr
 
 from .._misc import are_downloadable
 from .._model import Model
-from .aifs import Aifs
-from .ifs import Ifs
 
 
 class ECMWF(Model):
