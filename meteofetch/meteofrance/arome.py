@@ -1,4 +1,4 @@
-from ._meteo_france import HourlyProcess, MeteoFrance, MultiHourProcess
+from . import HourlyProcess, MeteoFrance, MultiHourProcess
 
 
 class Arome001(MeteoFrance, HourlyProcess):

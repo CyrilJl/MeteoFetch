@@ -1,4 +1,4 @@
-from ._ecmwf import ECMWF
+from . import ECMWF
 
 
 class Aifs(ECMWF):
