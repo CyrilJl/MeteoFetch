@@ -17,6 +17,9 @@ Disponibilité des modèles
             background-color: #f2f2f2;
             text-align: center;
         }
+        th:first-child {
+            text-align: center;
+        }
         .status-cell {
             text-align: center;
             font-weight: bold;
