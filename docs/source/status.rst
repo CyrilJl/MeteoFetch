@@ -10,7 +10,7 @@ Disponibilité des modèles
         }
         th, td {
             border: 1px solid #dddddd;
-            text-align: left;
+            text-align: center;
             padding: 8px;
         }
         th {
