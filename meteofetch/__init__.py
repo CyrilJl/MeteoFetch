@@ -3,7 +3,7 @@ from ._misc import set_grib_defs, set_test_mode
 from .ecmwf import ECMWF
 from .ecmwf.aifs import Aifs
 from .ecmwf.ifs import Ifs
-from .meteofrance import MeteoFrance, HourlyProcess, MultiHourProcess
+from .meteofrance import HourlyProcess, MeteoFrance, MultiHourProcess
 from .meteofrance.arome import (
     Arome001,
     Arome0025,
@@ -13,10 +13,6 @@ from .meteofrance.arome import (
     AromeOutreMerIndien,
     AromeOutreMerNouvelleCaledonie,
     AromeOutreMerPolynesie,
-    Arpege01,
-    Arpege025,
-    MFWAM0025,
-    MFWAM01,
 )
 from .meteofrance.arpege import Arpege01, Arpege025
 from .meteofrance.mfwam import MFWAM0025, MFWAM01
