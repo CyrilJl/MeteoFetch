@@ -62,22 +62,87 @@ Ifs
 
     <div id="status-ifs"></div>
 
+Aifs
+~~~
+
+.. raw:: html
+
+    <div id="status-aifs"></div>
+
 Météo-France
 ------------
 
+Arpège
+~~~~~~
+
+Arpege 0.1°
++++++++++++
+
+.. raw:: html
+
+    <div id="status-arpege01"></div>
+
+Arpege 0.25°
+++++++++++++
+
+.. raw:: html
+
+    <div id="status-arpege025"></div>
+
+Arome
+~~~~~
+
 Arome 0.01°
-~~~~~~~~~~~~
++++++++++++
 
 .. raw:: html
 
     <div id="status-arome001"></div>
 
-Arpege 0.1°
-~~~~~~~~~~~
+Arome 0.025°
+++++++++++++
 
 .. raw:: html
 
-    <div id="status-arpege01"></div>
+    <div id="status-arome0025"></div>
+
+Arome Outre-Mer
+~~~~~~~~~~~~~~~
+
+Arome Outre-Mer Antilles
+++++++++++++++++++++++++
+
+.. raw:: html
+
+    <div id="status-arome-om-antilles"></div>
+
+Arome Outre-Mer Guyane
+++++++++++++++++++++++
+
+.. raw:: html
+
+    <div id="status-arome-om-guyane"></div>
+
+Arome Outre-Mer Indien
+++++++++++++++++++++++
+
+.. raw:: html
+
+    <div id="status-arome-om-indien"></div>
+
+Arome Outre-Mer Nouvelle-Calédonie
+++++++++++++++++++++++++++++++++++
+
+.. raw:: html
+
+    <div id="status-arome-om-nouvelle-caledonie"></div>
+
+Arome Outre-Mer Polynésie
++++++++++++++++++++++++++
+
+.. raw:: html
+
+    <div id="status-arome-om-polynesie"></div>
 
 .. raw:: html
 
