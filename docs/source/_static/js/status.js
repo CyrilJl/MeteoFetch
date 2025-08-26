@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Helper function for Arome Outre Mer models
-    const getAromeOMGroups = function(paquet) {
+    const getAromeOMGroups = function (paquet) {
         if (paquet === "IP4" || paquet === "HP3") {
             return this.groups.slice(1);
         }
@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
             freqUpdate: 12,
             pastRuns: 4,
             groups: [...[...Array(49).keys()].map(i => i * 3), ...[...Array(13).keys()].map(i => 150 + i * 6)],
-            getUrls: function(date) {
+            getUrls: function (date) {
                 const ymd = date.toISOString().slice(0, 10).replace(/-/g, '');
                 const hour = date.getUTCHours().toString().padStart(2, '0');
                 // For IFS, we check a few key groups, not all of them to avoid too many requests
-                const groupsToCheck = [this.groups[0], this.groups[10], this.groups[20], this.groups[this.groups.length -1]];
+                const groupsToCheck = [this.groups[0], this.groups[10], this.groups[20], this.groups[this.groups.length - 1]];
                 return groupsToCheck.map(group => {
-                     return this.baseUrl
+                    return this.baseUrl
                         .replace(/{ymd}/g, ymd)
                         .replace(/{hour}/g, hour)
                         .replace(/{group}/g, group);
@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
             freqUpdate: 6,
             pastRuns: 4,
             groups: Array.from({ length: 42 }, (_, i) => i * 6),
-            getUrls: function(date) {
+            getUrls: function (date) {
                 const ymd = date.toISOString().slice(0, 10).replace(/-/g, '');
                 const hour = date.getUTCHours().toString().padStart(2, '0');
-                const groupsToCheck = [this.groups[0], this.groups[10], this.groups[20], this.groups[this.groups.length -1]];
+                const groupsToCheck = [this.groups[0], this.groups[10], this.groups[20], this.groups[this.groups.length - 1]];
                 return groupsToCheck.map(group => {
-                     return this.baseUrl
+                    return this.baseUrl
                         .replace(/{ymd}/g, ymd)
                         .replace(/{hour}/g, hour)
                         .replace(/{group}/g, group);
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'IP1', 'IP2', 'IP3', 'IP4', 'HP1', 'HP2'],
             groups: ["000H012H", "013H024H", "025H036H", "037H048H", "049H060H", "061H072H", "073H084H", "085H096H", "097H102H"],
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 return this.groups.map(group => {
                     return this.baseUrl
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'IP1', 'IP2', 'IP3', 'IP4', 'HP1', 'HP2'],
             groups: ["000H024H", "025H048H", "049H072H", "073H102H"],
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 return this.groups.map(group => {
                     return this.baseUrl
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'SP3', 'HP1'],
             groups: Array.from({ length: 52 }, (_, i) => `${String(i).padStart(2, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 return this.groups.map(group => {
                     return this.baseUrl
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: ["00H06H", "07H12H", "13H18H", "19H24H", "25H30H", "31H36H", "37H42H", "43H48H", "49H51H"],
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 return this.groups.map(group => {
                     return this.baseUrl
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: Array.from({ length: 49 }, (_, i) => `${String(i).padStart(3, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: Array.from({ length: 49 }, (_, i) => `${String(i).padStart(3, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: Array.from({ length: 49 }, (_, i) => `${String(i).padStart(3, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: Array.from({ length: 49 }, (_, i) => `${String(i).padStart(3, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
             groups: Array.from({ length: 49 }, (_, i) => `${String(i).padStart(3, '0')}H`),
-            getUrls: function(date, paquet) {
+            getUrls: function (date, paquet) {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
@@ -216,14 +216,18 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
 
-    function checkUrl(url) {
-        return fetch(url, { method: 'HEAD' })
-            .then(response => response.ok)
-            .catch(() => false);
+    async function checkUrl(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch {
+            return false;
+        }
     }
 
-    function checkUrls(urls) {
-        return Promise.all(urls.map(checkUrl)).then(results => results.every(r => r));
+    async function checkUrls(urls) {
+        const results = await Promise.all(urls.map(checkUrl));
+        return results.every(r => r);
     }
 
     function createTable(model) {
