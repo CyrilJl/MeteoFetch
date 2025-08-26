@@ -1,5 +1,5 @@
-Statut des modèles
-===================
+Disponibilité des modèles
+=========================
 
 .. raw:: html
 
