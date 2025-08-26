@@ -8,6 +8,7 @@ from ._arome import (
     AromeOutreMerPolynesie,
 )
 from ._arpege import Arpege01, Arpege025
+from ._ecmwf import ECMWF
 from ._ifs import Ifs
 from ._aifs import Aifs
 from ._mfwam import MFWAM0025, MFWAM01
@@ -23,6 +24,7 @@ __all__ = [
     "AromeOutreMerPolynesie",
     "Arpege01",
     "Arpege025",
+    "ECMWF",
     "Ifs",
     "Aifs",
     "MFWAM0025",
