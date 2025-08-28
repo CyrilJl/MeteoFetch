@@ -226,8 +226,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function checkUrls(urls) {
-        const results = await Promise.all(urls.map(checkUrl));
-        return results.every(r => r);
+        const chunkSize = 10;
+        const delay = 100; // ms
+        for (let i = 0; i < urls.length; i += chunkSize) {
+            const chunk = urls.slice(i, i + chunkSize);
+            const results = await Promise.all(chunk.map(checkUrl));
+            if (results.some(r => !r)) {
+                return false;
+            }
+            if (i + chunkSize < urls.length) {
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+        return true;
     }
 
     function createTable(model) {
