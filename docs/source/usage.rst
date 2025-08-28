@@ -1,3 +1,5 @@
+:notoc: true
+
 Utilisation
 ===========
 

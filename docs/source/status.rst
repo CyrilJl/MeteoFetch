@@ -1,3 +1,5 @@
+:notoc: true
+
 Disponibilité des modèles
 =========================
 
