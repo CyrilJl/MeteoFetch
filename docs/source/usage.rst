@@ -1,7 +1,12 @@
 :notoc: true
 
+.. _usage:
+
+En pratique
+###########
+
 Utilisation
-===========
+-----------
 
 ``meteofetch`` propose deux modes de fonctionnement :
 
@@ -38,9 +43,9 @@ Utilisation
 
 
 Disponibilité
-=============
+-------------
 
-Il est possible de vérifier la disponibilité des derniers runs de prévision pour un modèle donné.
+Il est également possible de vérifier la disponibilité des derniers runs de prévision pour un modèle donné.
 
 .. code-block:: python
 
