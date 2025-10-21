@@ -6,7 +6,7 @@ class Ifs(ECMWF):
     https://www.ecmwf.int/en/forecasts/datasets/open-data
     """
 
-    base_url_ = "https://data.ecmwf.int/ecpds/home/opendata"
+    base_url_ = "https://data.ecmwf.int/forecasts"
     past_runs_ = 8
     freq_update = 12
     url_ = "{ymd}/{hour}z/ifs/0p25/oper/{ymd}{hour}0000-{group}h-oper-fc.grib2"
