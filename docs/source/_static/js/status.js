@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'ifs': {
             name: 'Ifs',
             containerId: 'status-ifs',
-            baseUrl: 'https://data.ecmwf.int/ecpds/home/opendata/{ymd}/{hour}z/ifs/0p25/oper/{ymd}{hour}0000-{group}h-oper-fc.grib2',
+            baseUrl: 'https://data.ecmwf.int/forecasts/{ymd}/{hour}z/ifs/0p25/oper/{ymd}{hour}0000-{group}h-oper-fc.grib2',
             freqUpdate: 12,
             pastRuns: 4,
             groups: [...[...Array(49).keys()].map(i => i * 3), ...[...Array(13).keys()].map(i => 150 + i * 6)],
