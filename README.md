@@ -162,7 +162,7 @@ datasets = Arome0025.get_latest_forecast(paquet="SP1")
 animate(da=datasets['t2m'], path="run_t2m.mp4")
 ```
 
-https://github.com/user-attachments/assets/48584e19-c80d-4a9f-a6c1-ad60773e9d6f
+https://github.com/user-attachments/assets/05dec9f8-de94-4f22-bb25-2e55da4fb768
 
 ``meteofetch`` permet également de charger les fichiers gribs de la prévision souhaitée à l'endroit où le souhaite l'utilisateur.
 
