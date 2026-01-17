@@ -5,6 +5,7 @@ import pytest
 from meteofetch import (
     MFWAM0025,
     MFWAM01,
+    Aifs,
     Arome001,
     Arome0025,
     AromeOutreMerAntilles,
@@ -15,7 +16,6 @@ from meteofetch import (
     Arpege01,
     Arpege025,
     Ifs,
-    Aifs,
     set_grib_defs,
     set_test_mode,
 )
