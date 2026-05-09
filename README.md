@@ -31,7 +31,7 @@ mamba install meteofetch
 
 Un modèle représente une source et une résolution (ex: Arome0025, Arpege01, Ifs). Un paquet regroupe des variables prédéfinies téléchargeables en une fois (ex: SP1, SP2, SP3). Vous pouvez aussi demander des variables précises pour un paquet.
 
-Vidéo de carte avec mapflow
+Vidéo de carte réalisée avec [mapflow](https://mapflow.readthedocs.io/en/latest/) :
 ```python
 from mapflow import animate
 from meteofetch import Arome0025
