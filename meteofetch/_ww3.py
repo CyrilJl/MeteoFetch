@@ -1,4 +1,4 @@
-from ._meteo_france import MeteoFrance
+from .meteofrance import MeteoFrance
 
 
 class WW3MARO01(MeteoFrance):
@@ -9,5 +9,6 @@ class WW3MARO01(MeteoFrance):
     )
     freq_update = 3
 
+    @staticmethod
     def _process_ds(ds):
         return ds

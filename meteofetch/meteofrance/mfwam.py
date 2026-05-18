@@ -1,7 +1,7 @@
 from . import HourlyProcess, MeteoFrance
 
 
-class MFWAM(MeteoFrance, HourlyProcess):
+class MFWAM(HourlyProcess, MeteoFrance):
     base_url_ = "https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt"
     paquets_ = ("SP1",)
 

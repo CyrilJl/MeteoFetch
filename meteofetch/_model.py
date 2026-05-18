@@ -7,8 +7,7 @@ from pathlib import Path
 from platform import system
 from shutil import copyfileobj
 from subprocess import CalledProcessError, run
-from tempfile import TemporaryDirectory
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import cfgrib
 import requests
@@ -27,8 +26,12 @@ class Model:
     def __repr__(self):
         return f"{self.__class__.__name__}()"
 
+    @staticmethod
+    def _process_ds(ds):
+        raise NotImplementedError
+
     @classmethod
-    def _url_to_file(cls, url: str, tempdir: TemporaryDirectory) -> Path:
+    def _url_to_file(cls, url: str, tempdir: str) -> Union[Path, bool]:
         """Télécharge un fichier depuis une URL et le sauvegarde dans un répertoire temporaire.
         Meilleure gestion de la mémoire pour les fichiers volumineux.
         Utilise une taille de tampon de 16 Mo pour le téléchargement.

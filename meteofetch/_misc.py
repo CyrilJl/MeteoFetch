@@ -97,6 +97,7 @@ def set_grib_defs(source: Literal["eccodes", "meteofrance"]):
         if source == "eccodes":
             os.environ.pop("ECCODES_DEFINITION_PATH", None)
         else:
+            assert isinstance(required_path, str)
             os.environ["ECCODES_DEFINITION_PATH"] = required_path
         print(f"Définitions GRIB mises à jour : {source}")
         eccodes.codes_context_delete()

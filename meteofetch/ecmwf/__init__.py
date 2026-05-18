@@ -1,5 +1,5 @@
 from tempfile import TemporaryDirectory
-from typing import Dict
+from typing import Dict, Optional, Union
 
 import pandas as pd
 import requests
@@ -25,7 +25,7 @@ class ECMWF(Model):
         return ds
 
     @classmethod
-    def _get_urls(cls, date: pd.Timestamp) -> list:
+    def _get_urls(cls, date: Union[str, pd.Timestamp]) -> list:
         """Génère les URLs pour télécharger les fichiers GRIB2."""
         date_dt = pd.to_datetime(date)
         ymd, hour = f"{date_dt:%Y%m%d}", f"{date_dt:%H}"
@@ -45,12 +45,12 @@ class ECMWF(Model):
     @classmethod
     def get_forecast(
         cls,
-        date: str,
-        variables: list = None,
-        path: str = None,
+        date: Union[str, pd.Timestamp],
+        variables: Optional[list] = None,
+        path: Optional[str] = None,
         return_data: bool = True,
         num_workers: int = 4,
-    ) -> Dict[str, xr.DataArray] | list:
+    ) -> Union[Dict[str, xr.DataArray], list]:
         """Récupère les prévisions pour une date donnée."""
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
         date_str = f"{date_dt:%Y-%m-%dT%H}"
@@ -77,7 +77,7 @@ class ECMWF(Model):
                 return paths
 
     @classmethod
-    def get_latest_forecast_time(cls) -> pd.Timestamp | bool:
+    def get_latest_forecast_time(cls) -> Optional[pd.Timestamp]:
         """Trouve l'heure de prévision la plus récente disponible parmi les runs récents.
 
         Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
@@ -92,16 +92,16 @@ class ECMWF(Model):
             urls = cls._get_urls(date=date)
             if are_downloadable(urls):
                 return date
-        return False
+        return None
 
     @classmethod
     def get_latest_forecast(
         cls,
-        variables: list = None,
-        path: str = None,
+        variables: Optional[list] = None,
+        path: Optional[str] = None,
         return_data: bool = True,
         num_workers: int = 4,
-    ) -> Dict[str, xr.DataArray] | list:
+    ) -> Union[Dict[str, xr.DataArray], list]:
         """Récupère les dernières prévisions disponibles parmi les runs récents."""
         date = cls.get_latest_forecast_time()
         if date:
@@ -123,7 +123,7 @@ class ECMWF(Model):
         for k in range(cls.past_runs_):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
             index.append(date)
-            urls = cls._get_urls(date=f"{date:%Y-%m-%dT%H}")
+            urls = cls._get_urls(date=date)
             downloadable = are_downloadable(urls, return_date=return_date)
             ret.append(downloadable)
         return pd.Series(ret, index=index, name=f"{cls.__name__.lower()}")

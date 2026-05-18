@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
-from typing import Dict
+from typing import Dict, Optional
 
 import pandas as pd
 import requests
@@ -13,8 +13,11 @@ from .._model import Model
 class MeteoFrance(Model):
     """Base class for all Meteo-France models."""
 
-    base_url_ = "https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt"
-    past_runs_ = 8
+    base_url_: str = "https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt"
+    past_runs_: int = 8
+    paquets_: tuple
+    url_: str
+    freq_update: int
 
     @classmethod
     def _get_groups(cls, paquet):
@@ -111,7 +114,7 @@ class MeteoFrance(Model):
         return pd.concat(ret, axis=1)
 
     @classmethod
-    def get_latest_forecast_time(cls, paquet: str) -> pd.Timestamp:
+    def get_latest_forecast_time(cls, paquet: str) -> Optional[pd.Timestamp]:
         """Récupère la date du dernier run disponible pour un paquet donné.
 
         Args:
@@ -127,7 +130,7 @@ class MeteoFrance(Model):
             downloadable = are_downloadable(urls)
             if downloadable:
                 return date
-        return False
+        return None
 
     @classmethod
     def get_latest_forecast(
