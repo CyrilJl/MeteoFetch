@@ -2,15 +2,18 @@
 The Well Known Text of WGS 84 is hardcoded in the code to avoid having to import pyproj.
 """
 
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Literal
+from typing import List, Literal, Union
 
 import eccodes
 import requests
 import xarray as xr
+
+logger = logging.getLogger(__name__)
 
 CRS_WKT = """
             GEOGCRS[
@@ -108,7 +111,8 @@ def set_test_mode():
     print("Mode test activé. Les données des xr.DataArrays sont transformés en booléens par isnull().")
 
 
-def is_downloadable(url, return_date=False):
+def is_downloadable(url: str, return_date: bool = False) -> Union[bool, datetime]:
+    logger.debug("Checking availability of %s", url)
     try:
         h = requests.head(url, allow_redirects=True, timeout=10)
         if h.status_code != 200:
@@ -121,11 +125,12 @@ def is_downloadable(url, return_date=False):
                 return datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
             return False
         return True
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        logger.warning("Availability check failed for %s: %s", url, e)
         return False
 
 
-def are_downloadable(urls, return_date=False):
+def are_downloadable(urls: List[str], return_date: bool = False) -> Union[bool, datetime]:
     with ThreadPoolExecutor() as executor:
         # Utiliser executor.map pour appliquer la fonction is_downloadable à chaque URL
         results = list(executor.map(lambda url: is_downloadable(url, return_date), urls))

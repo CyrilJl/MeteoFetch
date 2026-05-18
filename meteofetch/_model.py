@@ -1,3 +1,4 @@
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 from glob import glob
@@ -15,6 +16,8 @@ import xarray as xr
 
 from ._misc import geo_encode_cf
 
+logger = logging.getLogger(__name__)
+
 
 class Model:
     TIMEOUT = 10
@@ -31,26 +34,31 @@ class Model:
         raise NotImplementedError
 
     @classmethod
-    def _url_to_file(cls, url: str, tempdir: str) -> Union[Path, bool]:
+    def _url_to_file(cls, url: str, tempdir: str, num_retries: int = 1) -> Union[Path, bool]:
         """Télécharge un fichier depuis une URL et le sauvegarde dans un répertoire temporaire.
-        Meilleure gestion de la mémoire pour les fichiers volumineux.
-        Utilise une taille de tampon de 16 Mo pour le téléchargement.
+        En cas d'échec, la tentative est répétée jusqu'à num_retries fois supplémentaires.
+        Utilise une taille de tampon de 64 Mo pour le téléchargement.
         """
-        try:
-            temp_path = Path(tempdir) / os.path.basename(url).replace(":", "-")
-
-            with requests.get(url, stream=True, timeout=cls.TIMEOUT) as r:
-                r.raise_for_status()
-                with open(temp_path, "wb") as f:
-                    copyfileobj(r.raw, f, length=1024 * 1024 * 64)
-            return temp_path
-        except Exception:
-            return False
+        for attempt in range(num_retries + 1):
+            try:
+                temp_path = Path(tempdir) / os.path.basename(url).replace(":", "-")
+                with requests.get(url, stream=True, timeout=cls.TIMEOUT) as r:
+                    r.raise_for_status()
+                    with open(temp_path, "wb") as f:
+                        copyfileobj(r.raw, f, length=1024 * 1024 * 64)
+                logger.debug("Downloaded %s", url)
+                return temp_path
+            except (requests.exceptions.RequestException, OSError) as e:
+                if attempt < num_retries:
+                    logger.warning("Download attempt %d/%d failed for %s: %s — retrying", attempt + 1, num_retries + 1, url, e)
+                else:
+                    logger.error("All %d download attempt(s) failed for %s: %s", num_retries + 1, url, e)
+        return False
 
     @classmethod
-    def _download_urls(cls, urls, path, num_workers):
+    def _download_urls(cls, urls, path, num_workers, num_retries: int = 1):
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            paths = executor.map(lambda url: cls._url_to_file(url, path), urls)
+            paths = executor.map(lambda url: cls._url_to_file(url, path, num_retries), urls)
         return list(paths)
 
     @classmethod

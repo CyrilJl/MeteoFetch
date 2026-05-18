@@ -1,3 +1,4 @@
+import logging
 from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 from typing import Dict, Optional
@@ -8,6 +9,8 @@ import xarray as xr
 
 from .._misc import are_downloadable
 from .._model import Model
+
+logger = logging.getLogger(__name__)
 
 
 class MeteoFrance(Model):
@@ -39,15 +42,15 @@ class MeteoFrance(Model):
         return urls
 
     @classmethod
-    def _download_paquet(cls, date, paquet, path, num_workers):
+    def _download_paquet(cls, date, paquet, path, num_workers, num_retries: int = 1):
         cls.check_paquet(paquet)
 
         urls = cls._get_urls(paquet=paquet, date=date)
-        paths = cls._download_urls(urls, path, num_workers)
+        paths = cls._download_urls(urls, path, num_workers, num_retries)
         if not all(paths):
+            logger.error("Some files could not be downloaded for %s paquet=%s run %s", cls.__name__, paquet, date)
             return []
-        else:
-            return paths
+        return paths
 
     @classmethod
     def get_forecast(
@@ -58,7 +61,25 @@ class MeteoFrance(Model):
         path=None,
         return_data=True,
         num_workers: int = 4,
+        num_retries: int = 1,
     ) -> Dict[str, xr.DataArray]:
+        """Récupère les prévisions pour une date et un paquet donnés.
+
+        Args:
+            date (str | pd.Timestamp): Date du run de prévision.
+            paquet (str): Paquet de données à télécharger. Doit faire partie de cls.paquets_. Defaults to "SP1".
+            variables (str | list, optional): Variable(s) à extraire. Si None, toutes les variables sont conservées.
+            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
+            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
+            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
+            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+
+        Returns:
+            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+
+        Raises:
+            ValueError: Si le paquet spécifié n'est pas valide, ou si path est None et return_data est False.
+        """
         cls.check_paquet(paquet)
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
         date_str = f"{date_dt:%Y-%m-%dT%H}"
@@ -66,6 +87,7 @@ class MeteoFrance(Model):
         if (path is None) and (not return_data):
             raise ValueError("Le chemin doit être spécifié si return_data est False.")
 
+        logger.info("Fetching %s forecast for run %s (paquet=%s)", cls.__name__, date_str, paquet)
         with TemporaryDirectory(prefix="meteofetch_") as tempdir:
             if path is None:
                 path = tempdir
@@ -75,6 +97,7 @@ class MeteoFrance(Model):
                 paquet=paquet,
                 path=path,
                 num_workers=num_workers,
+                num_retries=num_retries,
             )
             if return_data:
                 datasets = cls._read_multiple_gribs(paths=paths, variables=variables, num_workers=num_workers)
@@ -129,6 +152,7 @@ class MeteoFrance(Model):
             urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
             downloadable = are_downloadable(urls)
             if downloadable:
+                logger.info("Latest available %s run: %s (paquet=%s)", cls.__name__, date, paquet)
                 return date
         return None
 
@@ -140,6 +164,7 @@ class MeteoFrance(Model):
         path=None,
         return_data=True,
         num_workers: int = 4,
+        num_retries: int = 1,
     ) -> Dict[str, xr.DataArray]:
         """Récupère les dernières prévisions disponibles parmi les runs récents.
 
@@ -152,6 +177,7 @@ class MeteoFrance(Model):
             variables (str|List[str], optional): Variable(s) à extraire des fichiers GRIB. Si None, toutes les variables
                 sont conservées. Defaults to None.
             num_workers (int, optional): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
+            num_retries (int, optional): Nombre de tentatives supplémentaires en cas d'échec de téléchargement. Defaults to 1.
 
         Returns:
             Dict[str, xr.DataArray]: Dictionnaire des DataArrays des variables demandées, avec les coordonnées
@@ -171,6 +197,7 @@ class MeteoFrance(Model):
                 path=path,
                 return_data=return_data,
                 num_workers=num_workers,
+                num_retries=num_retries,
             )
             if ret:
                 return ret

@@ -42,6 +42,29 @@ Utilisation
 
 
 
+Gestion des erreurs réseau
+--------------------------
+
+Par défaut, chaque fichier est retéléchargé une fois automatiquement en cas d'échec réseau transitoire.
+Ce comportement est configurable via le paramètre ``num_retries`` :
+
+.. code-block:: python
+
+  from meteofetch import Arome0025
+
+  # Désactiver les nouvelles tentatives
+  datasets = Arome0025.get_latest_forecast(paquet='SP1', num_retries=0)
+
+  # Autoriser jusqu'à 3 nouvelles tentatives par fichier
+  datasets = Arome0025.get_latest_forecast(paquet='SP1', num_retries=3)
+
+Pour afficher les logs de téléchargement (tentatives, succès, erreurs) :
+
+.. code-block:: python
+
+  import logging
+  logging.basicConfig(level=logging.DEBUG)
+
 Disponibilité
 -------------
 

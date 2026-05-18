@@ -1,3 +1,4 @@
+import logging
 from tempfile import TemporaryDirectory
 from typing import Dict, Optional, Union
 
@@ -7,6 +8,8 @@ import xarray as xr
 
 from .._misc import are_downloadable
 from .._model import Model
+
+logger = logging.getLogger(__name__)
 
 
 class ECMWF(Model):
@@ -33,14 +36,14 @@ class ECMWF(Model):
         return urls
 
     @classmethod
-    def _download_paquet(cls, date: str, path: str, num_workers: int) -> list:
+    def _download_paquet(cls, date: str, path: str, num_workers: int, num_retries: int = 1) -> list:
         """Télécharge les fichiers pour un paquet donné."""
         urls = cls._get_urls(date=date)
-        paths = cls._download_urls(urls, path, num_workers)
+        paths = cls._download_urls(urls, path, num_workers, num_retries)
         if not all(paths):
+            logger.error("Some files could not be downloaded for %s run %s", cls.__name__, date)
             return []
-        else:
-            return paths
+        return paths
 
     @classmethod
     def get_forecast(
@@ -50,14 +53,28 @@ class ECMWF(Model):
         path: Optional[str] = None,
         return_data: bool = True,
         num_workers: int = 4,
+        num_retries: int = 1,
     ) -> Union[Dict[str, xr.DataArray], list]:
-        """Récupère les prévisions pour une date donnée."""
+        """Récupère les prévisions pour une date donnée.
+
+        Args:
+            date (str | pd.Timestamp): Date du run de prévision.
+            variables (list, optional): Variables à extraire. Si None, toutes les variables sont conservées.
+            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
+            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
+            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
+            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+
+        Returns:
+            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+        """
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
         date_str = f"{date_dt:%Y-%m-%dT%H}"
 
         if (path is None) and (not return_data):
             raise ValueError("Le chemin doit être spécifié si return_data est False.")
 
+        logger.info("Fetching %s forecast for run %s", cls.__name__, date_str)
         with TemporaryDirectory(prefix="meteofetch_") as tempdir:
             if path is None:
                 path = tempdir
@@ -66,6 +83,7 @@ class ECMWF(Model):
                 date=date_str,
                 path=path,
                 num_workers=num_workers,
+                num_retries=num_retries,
             )
             if return_data:
                 datasets = cls._read_multiple_gribs(paths=paths, variables=variables, num_workers=num_workers)
@@ -91,6 +109,7 @@ class ECMWF(Model):
             date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
             urls = cls._get_urls(date=date)
             if are_downloadable(urls):
+                logger.info("Latest available %s run: %s", cls.__name__, date)
                 return date
         return None
 
@@ -101,8 +120,26 @@ class ECMWF(Model):
         path: Optional[str] = None,
         return_data: bool = True,
         num_workers: int = 4,
+        num_retries: int = 1,
     ) -> Union[Dict[str, xr.DataArray], list]:
-        """Récupère les dernières prévisions disponibles parmi les runs récents."""
+        """Récupère les dernières prévisions disponibles parmi les runs récents.
+
+        Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
+        et télécharge le premier run dont toutes les URLs sont accessibles.
+
+        Args:
+            variables (list, optional): Variables à extraire. Si None, toutes les variables sont conservées.
+            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
+            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
+            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
+            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+
+        Returns:
+            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+
+        Raises:
+            requests.HTTPError: Si aucun run valide n'a été trouvé parmi les cls.past_runs_ derniers runs.
+        """
         date = cls.get_latest_forecast_time()
         if date:
             ret = cls.get_forecast(
@@ -111,6 +148,7 @@ class ECMWF(Model):
                 path=path,
                 return_data=return_data,
                 num_workers=num_workers,
+                num_retries=num_retries,
             )
             if ret:
                 return ret
