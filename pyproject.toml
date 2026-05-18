@@ -14,7 +14,12 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["cfgrib", "requests", "xarray"]
+dependencies = [
+    "cfgrib",
+    "eccodeslib",
+    "requests",
+    "xarray",
+]
 
 [project.optional-dependencies]
 test = ["pytest"]
