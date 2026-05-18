@@ -110,58 +110,16 @@ def set_test_mode():
 def is_downloadable(url, return_date=False):
     try:
         h = requests.head(url, allow_redirects=True, timeout=10)
-
-        # Vérifier le code de statut
-        if not h.status_code == 200:
+        if h.status_code != 200:
             return False
-
-        # Vérifier le Content-Type - exclure les pages HTML par exemple
-        content_type = h.headers.get("Content-Type", "")
-        if "text/html" in content_type.lower():
+        if "text/html" in h.headers.get("Content-Type", "").lower():
             return False
-
-        # Vérifier Content-Length (optionnel)
-        content_length = h.headers.get("Content-Length")
-        if content_length and int(content_length) > 0:
-            if return_date:
-                # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
-                last_modified = h.headers.get("Last-Modified")
-                if last_modified:
-                    # Convertir la date en objet datetime
-                    date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
-                    return date
-                else:
-                    return False
-            else:
-                return True
-
-        # Si Content-Length n'est pas disponible, on se base sur Content-Disposition
-        content_disposition = h.headers.get("Content-Disposition", "")
-        if "attachment" in content_disposition.lower() or "filename" in content_disposition.lower():
-            if return_date:
-                # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
-                last_modified = h.headers.get("Last-Modified")
-                if last_modified:
-                    # Convertir la date en objet datetime
-                    date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
-                    return date
-                else:
-                    return False
-            else:
-                return True
-
         if return_date:
-            # Obtenir la date de création du fichier à partir des en-têtes Last-Modified
             last_modified = h.headers.get("Last-Modified")
             if last_modified:
-                # Convertir la date en objet datetime
-                date = datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
-                return date
-            else:
-                return False
-        else:
-            return True
-
+                return datetime.strptime(last_modified, "%a, %d %b %Y %H:%M:%S %Z")
+            return False
+        return True
     except requests.exceptions.RequestException:
         return False
 

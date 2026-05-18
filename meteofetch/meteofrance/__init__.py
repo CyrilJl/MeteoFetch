@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 from typing import Dict
 
@@ -12,7 +13,7 @@ from .._model import Model
 class MeteoFrance(Model):
     """Base class for all Meteo-France models."""
 
-    base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
+    base_url_ = "https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt"
     past_runs_ = 8
 
     @classmethod
@@ -100,9 +101,13 @@ class MeteoFrance(Model):
         Returns:
             pd.DataFrame: DataFrame avec les paquets en colonnes et les dates de run en index.
         """
-        ret = []
-        for paquet in cls.paquets_:
-            ret.append(cls.availability_paquet(paquet=paquet, return_date=return_date))
+        with ThreadPoolExecutor() as executor:
+            ret = list(
+                executor.map(
+                    lambda paquet: cls.availability_paquet(paquet=paquet, return_date=return_date),
+                    cls.paquets_,
+                )
+            )
         return pd.concat(ret, axis=1)
 
     @classmethod
