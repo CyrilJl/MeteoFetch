@@ -12,7 +12,7 @@ from .._model import Model
 class MeteoFrance(Model):
     """Base class for all Meteo-France models."""
 
-    base_url_ = "https://object.data.gouv.fr/meteofrance-pnt/pnt"
+    base_url_ = "https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt"
     past_runs_ = 8
 
     @classmethod
