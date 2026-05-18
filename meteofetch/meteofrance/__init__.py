@@ -102,10 +102,12 @@ class MeteoFrance(Model):
             pd.DataFrame: DataFrame avec les paquets en colonnes et les dates de run en index.
         """
         with ThreadPoolExecutor() as executor:
-            ret = list(executor.map(
-                lambda paquet: cls.availability_paquet(paquet=paquet, return_date=return_date),
-                cls.paquets_,
-            ))
+            ret = list(
+                executor.map(
+                    lambda paquet: cls.availability_paquet(paquet=paquet, return_date=return_date),
+                    cls.paquets_,
+                )
+            )
         return pd.concat(ret, axis=1)
 
     @classmethod
