@@ -18,6 +18,9 @@ jobs:
       - name: Run ruff format
         run: ruff format .
 
+      - name: Run ruff check (imports)
+        run: ruff check --select I --fix .
+
       - name: Commit changes
         if: success()
         run: |
