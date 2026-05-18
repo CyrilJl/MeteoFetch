@@ -1,4 +1,4 @@
-from ._misc import set_grib_defs, set_test_mode
+from ._misc import ForecastNotAvailableError, set_grib_defs, set_test_mode
 from .ecmwf.aifs import Aifs
 from .ecmwf.ifs import Ifs
 from .meteofrance.arome import (
@@ -15,6 +15,7 @@ from .meteofrance.arpege import Arpege01, Arpege025
 from .meteofrance.mfwam import MFWAM0025, MFWAM01
 
 __all__ = [
+    "ForecastNotAvailableError",
     "set_grib_defs",
     "set_test_mode",
     "Aifs",

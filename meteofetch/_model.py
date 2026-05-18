@@ -11,6 +11,7 @@ from subprocess import CalledProcessError, run
 from typing import Dict, List, Union
 
 import cfgrib
+import pandas as pd
 import requests
 import xarray as xr
 
@@ -28,6 +29,18 @@ class Model:
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
+
+    @classmethod
+    def _iter_run_dates(cls) -> List[pd.Timestamp]:
+        """Return candidate run timestamps in reverse-chronological order (UTC).
+
+        Starts from the most recent floored run time and steps back by
+        ``freq_update`` hours, up to ``past_runs_`` entries.
+        """
+        freq = cls.freq_update
+        assert freq is not None, "freq_update must be set on concrete model subclasses"
+        latest = pd.Timestamp.utcnow().floor(f"{freq}h")
+        return [latest - pd.Timedelta(hours=freq * k) for k in range(cls.past_runs_)]
 
     @staticmethod
     def _process_ds(ds):
@@ -56,16 +69,29 @@ class Model:
         return False
 
     @classmethod
-    def _download_urls(cls, urls, path, num_workers, num_retries: int = 1):
+    def _download_urls(cls, urls: List[str], path: str, num_workers: int, num_retries: int = 1) -> List[Union[Path, bool]]:
+        """Download a list of URLs in parallel and return their local paths.
+
+        Args:
+            urls: Remote URLs to download.
+            path: Directory where files are saved.
+            num_workers: Number of parallel download threads.
+            num_retries: Number of additional attempts per file on failure.
+
+        Returns:
+            List of ``Path`` objects for successful downloads, ``False`` for failures.
+        """
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             paths = executor.map(lambda url: cls._url_to_file(url, path, num_retries), urls)
         return list(paths)
 
     @classmethod
     def _read_grib(cls, path) -> List[xr.Dataset]:
-        """cfgrib ne gère pas les fichiers de plus de 2 Go sur Windows:
-        Dans ce cas, on utilise grib_copy pour diviser le fichier en gribs
-        contenant chacun une seule variable
+        """Open a GRIB2 file and return a list of datasets (one per variable group).
+
+        On Windows, cfgrib cannot handle files larger than 2 GB. In that case the
+        file is first split into per-variable files using ``grib_copy``, then each
+        split file is opened individually.
         """
         kw = dict(backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
         if system() == "Windows" and getsize(path) >= 2**31:
@@ -88,25 +114,38 @@ class Model:
 
     @classmethod
     def _read_multiple_gribs(cls, paths, variables, num_workers) -> Dict[str, xr.DataArray]:
-        """Lit les fichiers GRIB en parallèle avec multiprocessing."""
-        ret = {}
+        """Read GRIB files in parallel and merge results by field name.
+
+        Args:
+            paths: Local GRIB file paths to read.
+            variables: If non-empty, only these field names are kept.
+            num_workers: Number of worker processes for parallel reading.
+
+        Returns:
+            Dict mapping field name → concatenated ``xr.DataArray`` (CF-encoded).
+
+        Note:
+            When test mode is active (see ``set_test_mode()``), field values are
+            replaced with their ``isnull()`` boolean mask to avoid loading real data.
+        """
+        ret: Dict[str, list] = {}
 
         with Pool(processes=num_workers) as pool:
-            # Traiter les fichiers en parallèle et recevoir les résultats au fur et à mesure
             for datasets in pool.imap(cls._read_grib, paths):
                 for ds in datasets:
-                    for field in ds.data_vars:
+                    for _field in ds.data_vars:
+                        field = str(_field)
                         if variables and field not in variables:
                             continue
                         if field not in ret:
                             ret[field] = []
-                        if os.environ.get("meteofetch_test_mode") == "1":
+                        if os.environ.get("METEOFETCH_TEST_MODE") == "1":  # set via set_test_mode()
                             ds[field] = ds[field].isnull(keep_attrs=True)
                         ret[field].append(cls._process_ds(ds[field]))
 
-        # Concaténer les résultats pour chaque champ
+        result: Dict[str, xr.DataArray] = {}
         for field in ret:
-            ret[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
-            ret[field] = geo_encode_cf(ret[field])
+            result[field] = xr.concat(ret[field], dim="time", coords="minimal", compat="override")
+            result[field] = geo_encode_cf(result[field])
 
-        return ret
+        return result

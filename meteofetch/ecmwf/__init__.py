@@ -1,12 +1,12 @@
 import logging
+from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict, Optional, Union
+from typing import Dict, List, Literal, Optional, Union, overload
 
 import pandas as pd
-import requests
 import xarray as xr
 
-from .._misc import are_downloadable
+from .._misc import ForecastNotAvailableError, are_downloadable
 from .._model import Model
 
 logger = logging.getLogger(__name__)
@@ -28,22 +28,48 @@ class ECMWF(Model):
         return ds
 
     @classmethod
-    def _get_urls(cls, date: Union[str, pd.Timestamp]) -> list:
-        """Génère les URLs pour télécharger les fichiers GRIB2."""
+    def _get_urls(cls, date: Union[str, pd.Timestamp]) -> List[str]:
+        """Build the list of GRIB2 download URLs for a given run date."""
         date_dt = pd.to_datetime(date)
         ymd, hour = f"{date_dt:%Y%m%d}", f"{date_dt:%H}"
-        urls = [cls.base_url_ + "/" + cls.url_.format(ymd=ymd, hour=hour, group=group) for group in cls.groups_]
-        return urls
+        return [cls.base_url_ + "/" + cls.url_.format(ymd=ymd, hour=hour, group=group) for group in cls.groups_]
 
     @classmethod
-    def _download_paquet(cls, date: str, path: str, num_workers: int, num_retries: int = 1) -> list:
-        """Télécharge les fichiers pour un paquet donné."""
+    def _download_paquet(cls, date: str, path: str, num_workers: int, num_retries: int = 1) -> List[Path]:
+        """Download all GRIB files for a run date into *path*.
+
+        Returns an empty list if any file fails to download.
+        """
         urls = cls._get_urls(date=date)
         paths = cls._download_urls(urls, path, num_workers, num_retries)
         if not all(paths):
             logger.error("Some files could not be downloaded for %s run %s", cls.__name__, date)
             return []
-        return paths
+        return [p for p in paths if isinstance(p, Path)]
+
+    @classmethod
+    @overload
+    def get_forecast(
+        cls,
+        date: Union[str, pd.Timestamp],
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[True] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> Dict[str, xr.DataArray]: ...
+
+    @classmethod
+    @overload
+    def get_forecast(
+        cls,
+        date: Union[str, pd.Timestamp],
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[False] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> List[Path]: ...
 
     @classmethod
     def get_forecast(
@@ -54,19 +80,24 @@ class ECMWF(Model):
         return_data: bool = True,
         num_workers: int = 4,
         num_retries: int = 1,
-    ) -> Union[Dict[str, xr.DataArray], list]:
-        """Récupère les prévisions pour une date donnée.
+    ) -> Union[Dict[str, xr.DataArray], List[Path]]:
+        """Fetch the forecast for a given run date.
 
         Args:
-            date (str | pd.Timestamp): Date du run de prévision.
-            variables (list, optional): Variables à extraire. Si None, toutes les variables sont conservées.
-            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
-            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
-            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
-            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+            date: Run date/time. Floored to the nearest ``freq_update`` hour boundary.
+            variables: Field names to keep. If ``None``, all fields are returned.
+            path: Directory for GRIB files. Uses a temporary directory if ``None``.
+            return_data: If ``True``, load data into memory and return a dict of
+                DataArrays. If ``False``, save files to *path* and return their paths.
+            num_workers: Parallel download/read workers.
+            num_retries: Extra download attempts per file on failure.
 
         Returns:
-            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+            Dict of ``xr.DataArray`` (CF-encoded) when ``return_data=True``,
+            or list of ``Path`` objects when ``return_data=False``.
+
+        Raises:
+            ValueError: If ``path`` is ``None`` and ``return_data`` is ``False``.
         """
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
         date_str = f"{date_dt:%Y-%m-%dT%H}"
@@ -96,22 +127,41 @@ class ECMWF(Model):
 
     @classmethod
     def get_latest_forecast_time(cls) -> Optional[pd.Timestamp]:
-        """Trouve l'heure de prévision la plus récente disponible parmi les runs récents.
+        """Return the most recent run timestamp for which all files are available.
 
-        Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
-        et retourne le premier run dont toutes les URLs sont accessibles.
+        Iterates over the last ``past_runs_`` run times in reverse-chronological
+        order (UTC) and returns the first one whose URLs are all reachable.
 
         Returns:
-            pd.Timestamp or False: Timestamp du run valide le plus récent, ou False si aucun run valide n'a été trouvé.
+            The latest available run ``pd.Timestamp``, or ``None`` if none found.
         """
-        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
-        for k in range(cls.past_runs_):
-            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
-            urls = cls._get_urls(date=date)
-            if are_downloadable(urls):
+        for date in cls._iter_run_dates():
+            if are_downloadable(cls._get_urls(date=date)):
                 logger.info("Latest available %s run: %s", cls.__name__, date)
                 return date
         return None
+
+    @classmethod
+    @overload
+    def get_latest_forecast(
+        cls,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[True] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> Dict[str, xr.DataArray]: ...
+
+    @classmethod
+    @overload
+    def get_latest_forecast(
+        cls,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[False] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> List[Path]: ...
 
     @classmethod
     def get_latest_forecast(
@@ -121,24 +171,27 @@ class ECMWF(Model):
         return_data: bool = True,
         num_workers: int = 4,
         num_retries: int = 1,
-    ) -> Union[Dict[str, xr.DataArray], list]:
-        """Récupère les dernières prévisions disponibles parmi les runs récents.
+    ) -> Union[Dict[str, xr.DataArray], List[Path]]:
+        """Fetch the most recent available forecast.
 
-        Parcourt les cls.past_runs_ derniers runs dans l'ordre chronologique inverse
-        et télécharge le premier run dont toutes les URLs sont accessibles.
+        Iterates over the last ``past_runs_`` run times (newest first) and
+        downloads the first run whose files are all reachable.
 
         Args:
-            variables (list, optional): Variables à extraire. Si None, toutes les variables sont conservées.
-            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
-            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
-            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
-            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+            variables: Field names to keep. If ``None``, all fields are returned.
+            path: Directory for GRIB files. Uses a temporary directory if ``None``.
+            return_data: If ``True``, return a dict of DataArrays. If ``False``,
+                save files to *path* and return their paths.
+            num_workers: Parallel download/read workers.
+            num_retries: Extra download attempts per file on failure.
 
         Returns:
-            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+            Dict of ``xr.DataArray`` (CF-encoded) when ``return_data=True``,
+            or list of ``Path`` objects when ``return_data=False``.
 
         Raises:
-            requests.HTTPError: Si aucun run valide n'a été trouvé parmi les cls.past_runs_ derniers runs.
+            ForecastNotAvailableError: If no valid run is found among the last
+                ``past_runs_`` runs.
         """
         date = cls.get_latest_forecast_time()
         if date:
@@ -152,16 +205,23 @@ class ECMWF(Model):
             )
             if ret:
                 return ret
-        raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
+        raise ForecastNotAvailableError(
+            f"No valid {cls.__name__} run found among the last {cls.past_runs_} runs."
+        )
 
     @classmethod
-    def availability(cls, return_date=False):
-        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
+    def availability(cls, return_date: bool = False) -> pd.Series:
+        """Check download availability for the last ``past_runs_`` run times.
+
+        Args:
+            return_date: If ``True``, return the ``Last-Modified`` date for each
+                run instead of a boolean.
+
+        Returns:
+            ``pd.Series`` indexed by run timestamp.
+        """
         index, ret = [], []
-        for k in range(cls.past_runs_):
-            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+        for date in cls._iter_run_dates():
             index.append(date)
-            urls = cls._get_urls(date=date)
-            downloadable = are_downloadable(urls, return_date=return_date)
-            ret.append(downloadable)
+            ret.append(are_downloadable(cls._get_urls(date=date), return_date=return_date))
         return pd.Series(ret, index=index, name=f"{cls.__name__.lower()}")

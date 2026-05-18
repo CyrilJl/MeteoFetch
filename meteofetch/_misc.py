@@ -15,6 +15,11 @@ import xarray as xr
 
 logger = logging.getLogger(__name__)
 
+
+class ForecastNotAvailableError(RuntimeError):
+    """Raised when no valid forecast run is found among the recent past runs."""
+
+
 CRS_WKT = """
             GEOGCRS[
                 "WGS 84",
@@ -86,7 +91,14 @@ def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     return da
 
 
-def set_grib_defs(source: Literal["eccodes", "meteofrance"]):
+def set_grib_defs(source: Literal["eccodes", "meteofrance"]) -> None:
+    """Switch the GRIB definition source used by eccodes.
+
+    Args:
+        source: "eccodes" to use the bundled eccodes definitions (default upstream behaviour),
+                or "meteofrance" to use the Météo-France-specific definitions shipped with
+                this package (required for some MeteoFrance model fields).
+    """
     current_path = os.environ.get("ECCODES_DEFINITION_PATH")
 
     if source == "eccodes":
@@ -106,12 +118,32 @@ def set_grib_defs(source: Literal["eccodes", "meteofrance"]):
         eccodes.codes_context_delete()
 
 
-def set_test_mode():
-    os.environ["meteofetch_test_mode"] = "1"
-    print("Mode test activé. Les données des xr.DataArrays sont transformés en booléens par isnull().")
+def set_test_mode() -> None:
+    """Enable test mode: replace all downloaded data with boolean (isnull) arrays.
+
+    Sets the ``METEOFETCH_TEST_MODE`` environment variable to ``"1"``.
+    When active, ``Model._read_multiple_gribs`` converts every field to a boolean
+    mask via ``isnull()``, which lets tests assert on shape and structure without
+    downloading or storing real meteorological data.
+    """
+    os.environ["METEOFETCH_TEST_MODE"] = "1"
+    print("Test mode enabled. DataArray values are replaced with isnull() booleans.")
 
 
 def is_downloadable(url: str, return_date: bool = False) -> Union[bool, datetime]:
+    """Check whether a URL points to a downloadable (non-HTML) resource.
+
+    Issues a HEAD request and inspects the status code and Content-Type.
+
+    Args:
+        url: The URL to probe.
+        return_date: If True, return the ``Last-Modified`` header as a
+            ``datetime`` on success instead of ``True``. Returns ``False``
+            when the header is absent or the resource is unavailable.
+
+    Returns:
+        ``True`` / ``datetime`` on success, ``False`` otherwise.
+    """
     logger.debug("Checking availability of %s", url)
     try:
         h = requests.head(url, allow_redirects=True, timeout=10)
@@ -131,6 +163,18 @@ def is_downloadable(url: str, return_date: bool = False) -> Union[bool, datetime
 
 
 def are_downloadable(urls: List[str], return_date: bool = False) -> Union[bool, datetime]:
+    """Check whether *all* URLs in a list point to downloadable resources.
+
+    Runs ``is_downloadable`` in parallel via a thread pool.
+
+    Args:
+        urls: List of URLs to probe.
+        return_date: If True, return the maximum ``Last-Modified`` date across
+            all URLs when every URL is available, or ``False`` otherwise.
+
+    Returns:
+        ``True`` / ``datetime`` if all URLs are downloadable, ``False`` otherwise.
+    """
     with ThreadPoolExecutor() as executor:
         # Utiliser executor.map pour appliquer la fonction is_downloadable à chaque URL
         results = list(executor.map(lambda url: is_downloadable(url, return_date), urls))

@@ -1,16 +1,19 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict, Optional
+from typing import Dict, List, Literal, Optional, Union, overload
 
 import pandas as pd
-import requests
 import xarray as xr
 
-from .._misc import are_downloadable
+from .._misc import ForecastNotAvailableError, are_downloadable
 from .._model import Model
 
 logger = logging.getLogger(__name__)
+
+# All paquet identifiers used across MeteoFrance models.
+Paquet = Literal["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"]
 
 
 class MeteoFrance(Model):
@@ -23,62 +26,96 @@ class MeteoFrance(Model):
     freq_update: int
 
     @classmethod
-    def _get_groups(cls, paquet):
-        """Méthode overwritten par les modèles OutreMer"""
+    def _get_groups(cls, paquet: Paquet) -> tuple:
+        """Return the group identifiers for *paquet* (overridden by OutreMer models)."""
         return cls.groups_
 
     @classmethod
-    def check_paquet(cls, paquet):
-        """Vérifie si le paquet spécifié est valide."""
+    def check_paquet(cls, paquet: Paquet) -> None:
+        """Raise ``ValueError`` if *paquet* is not valid for this model."""
         if paquet not in cls.paquets_:
-            raise ValueError(f"Le paquet doit être un des suivants : {cls.paquets_}")
+            raise ValueError(f"paquet must be one of {cls.paquets_}, got {paquet!r}")
 
     @classmethod
-    def _get_urls(cls, paquet, date) -> list:
-        urls = [
+    def _get_urls(cls, paquet: Paquet, date: str) -> List[str]:
+        """Build the list of GRIB2 download URLs for a given paquet and run date."""
+        return [
             cls.base_url_ + "/" + cls.url_.format(date=date, paquet=paquet, group=group)
             for group in cls._get_groups(paquet=paquet)
         ]
-        return urls
 
     @classmethod
-    def _download_paquet(cls, date, paquet, path, num_workers, num_retries: int = 1):
-        cls.check_paquet(paquet)
+    def _download_paquet(
+        cls, date: str, paquet: Paquet, path: str, num_workers: int, num_retries: int = 1
+    ) -> List[Path]:
+        """Download all GRIB files for a paquet/run-date into *path*.
 
+        Returns an empty list if any file fails to download.
+        """
+        cls.check_paquet(paquet)
         urls = cls._get_urls(paquet=paquet, date=date)
         paths = cls._download_urls(urls, path, num_workers, num_retries)
         if not all(paths):
             logger.error("Some files could not be downloaded for %s paquet=%s run %s", cls.__name__, paquet, date)
             return []
-        return paths
+        return [p for p in paths if isinstance(p, Path)]
+
+    @classmethod
+    @overload
+    def get_forecast(
+        cls,
+        date: Union[str, pd.Timestamp],
+        paquet: Paquet = ...,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[True] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> Dict[str, xr.DataArray]: ...
+
+    @classmethod
+    @overload
+    def get_forecast(
+        cls,
+        date: Union[str, pd.Timestamp],
+        paquet: Paquet = ...,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[False] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> List[Path]: ...
 
     @classmethod
     def get_forecast(
         cls,
-        date,
-        paquet="SP1",
-        variables=None,
-        path=None,
-        return_data=True,
+        date: Union[str, pd.Timestamp],
+        paquet: Paquet = "SP1",
+        variables: Optional[list] = None,
+        path: Optional[str] = None,
+        return_data: bool = True,
         num_workers: int = 4,
         num_retries: int = 1,
-    ) -> Dict[str, xr.DataArray]:
-        """Récupère les prévisions pour une date et un paquet donnés.
+    ) -> Union[Dict[str, xr.DataArray], List[Path]]:
+        """Fetch the forecast for a given run date and paquet.
 
         Args:
-            date (str | pd.Timestamp): Date du run de prévision.
-            paquet (str): Paquet de données à télécharger. Doit faire partie de cls.paquets_. Defaults to "SP1".
-            variables (str | list, optional): Variable(s) à extraire. Si None, toutes les variables sont conservées.
-            path (str, optional): Dossier de destination des fichiers GRIB. Si None, un dossier temporaire est utilisé.
-            return_data (bool): Si True, retourne les données en mémoire. Defaults to True.
-            num_workers (int): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
-            num_retries (int): Nombre de tentatives supplémentaires par fichier en cas d'échec. Defaults to 1.
+            date: Run date/time. Floored to the nearest ``freq_update`` hour boundary.
+            paquet: Data package identifier. Must be in ``cls.paquets_``. Defaults to ``"SP1"``.
+            variables: Field names to keep. If ``None``, all fields are returned.
+            path: Directory for GRIB files. Uses a temporary directory if ``None``.
+            return_data: If ``True``, load data into memory and return a dict of
+                DataArrays. If ``False``, save files to *path* and return their paths.
+            num_workers: Parallel download/read workers.
+            num_retries: Extra download attempts per file on failure.
 
         Returns:
-            Dict[str, xr.DataArray] | list: Données par variable, ou liste de chemins si return_data est False.
+            Dict of ``xr.DataArray`` (CF-encoded) when ``return_data=True``,
+            or list of ``Path`` objects when ``return_data=False``.
 
         Raises:
-            ValueError: Si le paquet spécifié n'est pas valide, ou si path est None et return_data est False.
+            ValueError: If *paquet* is invalid, or if *path* is ``None`` and
+                ``return_data`` is ``False``.
         """
         cls.check_paquet(paquet)
         date_dt = pd.to_datetime(str(date)).floor(f"{cls.freq_update}h")
@@ -109,23 +146,32 @@ class MeteoFrance(Model):
                 return paths
 
     @classmethod
-    def availability_paquet(cls, paquet, return_date=False):
-        latest_possible_date = pd.Timestamp.now().floor(f"{cls.freq_update}h")
+    def availability_paquet(cls, paquet: Paquet, return_date: bool = False) -> pd.Series:
+        """Check download availability for a single paquet across recent run times.
+
+        Args:
+            paquet: Package identifier to check.
+            return_date: If ``True``, return the ``Last-Modified`` date for each
+                run instead of a boolean.
+
+        Returns:
+            ``pd.Series`` indexed by run timestamp, named after *paquet*.
+        """
         index, ret = [], []
-        for k in range(cls.past_runs_):
-            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
+        for date in cls._iter_run_dates():
             index.append(date)
-            urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
-            downloadable = are_downloadable(urls, return_date=return_date)
-            ret.append(downloadable)
+            ret.append(are_downloadable(cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}"), return_date=return_date))
         return pd.Series(ret, index=index, name=paquet)
 
     @classmethod
-    def availability(cls, return_date=False) -> pd.DataFrame:
-        """Vérifie la disponibilité des paquets pour les derniers runs.
+    def availability(cls, return_date: bool = False) -> pd.DataFrame:
+        """Check availability for all paquets across the last ``past_runs_`` runs.
+
+        Args:
+            return_date: If ``True``, return ``Last-Modified`` dates instead of booleans.
 
         Returns:
-            pd.DataFrame: DataFrame avec les paquets en colonnes et les dates de run en index.
+            ``pd.DataFrame`` with paquets as columns and run timestamps as the index.
         """
         with ThreadPoolExecutor() as executor:
             ret = list(
@@ -137,55 +183,77 @@ class MeteoFrance(Model):
         return pd.concat(ret, axis=1)
 
     @classmethod
-    def get_latest_forecast_time(cls, paquet: str) -> Optional[pd.Timestamp]:
-        """Récupère la date du dernier run disponible pour un paquet donné.
+    def get_latest_forecast_time(cls, paquet: Paquet) -> Optional[pd.Timestamp]:
+        """Return the most recent run timestamp for which all paquet files are available.
 
         Args:
-            paquet (str): Le paquet pour lequel vérifier la disponibilité.
+            paquet: Package identifier to check.
 
         Returns:
-            pd.Timestamp: La date du dernier run disponible.
+            The latest available run ``pd.Timestamp``, or ``None`` if none found.
         """
-        latest_possible_date = pd.Timestamp.utcnow().floor(f"{cls.freq_update}h")
-        for k in range(cls.past_runs_):
-            date = latest_possible_date - pd.Timedelta(hours=cls.freq_update * k)
-            urls = cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")
-            downloadable = are_downloadable(urls)
-            if downloadable:
+        for date in cls._iter_run_dates():
+            if are_downloadable(cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}")):
                 logger.info("Latest available %s run: %s (paquet=%s)", cls.__name__, date, paquet)
                 return date
         return None
 
     @classmethod
+    @overload
     def get_latest_forecast(
         cls,
-        paquet="SP1",
-        variables=None,
-        path=None,
-        return_data=True,
+        paquet: Paquet = ...,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[True] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> Dict[str, xr.DataArray]: ...
+
+    @classmethod
+    @overload
+    def get_latest_forecast(
+        cls,
+        paquet: Paquet = ...,
+        variables: Optional[list] = ...,
+        path: Optional[str] = ...,
+        return_data: Literal[False] = ...,
+        num_workers: int = ...,
+        num_retries: int = ...,
+    ) -> List[Path]: ...
+
+    @classmethod
+    def get_latest_forecast(
+        cls,
+        paquet: Paquet = "SP1",
+        variables: Optional[list] = None,
+        path: Optional[str] = None,
+        return_data: bool = True,
         num_workers: int = 4,
         num_retries: int = 1,
-    ) -> Dict[str, xr.DataArray]:
-        """Récupère les dernières prévisions disponibles parmi les runs récents.
+    ) -> Union[Dict[str, xr.DataArray], List[Path]]:
+        """Fetch the most recent available forecast for a given paquet.
 
-        Tente de télécharger les données des dernières prévisions en testant successivement les runs les plus récents
-        jusqu'à trouver des données valides. Les runs sont testés dans l'ordre chronologique inverse.
+        Iterates over the last ``past_runs_`` run times (newest first) and
+        downloads the first run whose files are all reachable.
 
         Args:
-            paquet (str, optional): Le paquet de données à télécharger. Doit faire partie de cls.paquets_.
-                Defaults to "SP1".
-            variables (str|List[str], optional): Variable(s) à extraire des fichiers GRIB. Si None, toutes les variables
-                sont conservées. Defaults to None.
-            num_workers (int, optional): Nombre de workers pour le téléchargement parallèle. Defaults to 4.
-            num_retries (int, optional): Nombre de tentatives supplémentaires en cas d'échec de téléchargement. Defaults to 1.
+            paquet: Data package identifier. Must be in ``cls.paquets_``. Defaults to ``"SP1"``.
+            variables: Field names to keep. If ``None``, all fields are returned.
+            path: Directory for GRIB files. Uses a temporary directory if ``None``.
+            return_data: If ``True``, return a dict of DataArrays. If ``False``,
+                save files to *path* and return their paths.
+            num_workers: Parallel download/read workers.
+            num_retries: Extra download attempts per file on failure.
 
         Returns:
-            Dict[str, xr.DataArray]: Dictionnaire des DataArrays des variables demandées, avec les coordonnées
-                géographiques encodées selon les conventions CF.
+            Dict of ``xr.DataArray`` (CF-encoded) when ``return_data=True``,
+            or list of ``Path`` objects when ``return_data=False``.
 
         Raises:
-            ValueError: Si le paquet spécifié n'est pas valide.
-            requests.HTTPError: Si aucun paquet valide n'a été trouvé parmi les cls.past_runs_ derniers runs.
+            ValueError: If *paquet* is not valid for this model.
+            ForecastNotAvailableError: If no valid run is found among the last
+                ``past_runs_`` runs.
         """
         cls.check_paquet(paquet)
         date = cls.get_latest_forecast_time(paquet=paquet)
@@ -201,7 +269,9 @@ class MeteoFrance(Model):
             )
             if ret:
                 return ret
-        raise requests.HTTPError(f"Aucun paquet n'a été trouvé parmi les {cls.past_runs_} derniers runs.")
+        raise ForecastNotAvailableError(
+            f"No valid {cls.__name__} run found for paquet={paquet!r} among the last {cls.past_runs_} runs."
+        )
 
 
 def common_process(ds: xr.DataArray) -> xr.DataArray:
