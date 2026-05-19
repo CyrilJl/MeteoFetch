@@ -40,7 +40,6 @@ html_theme_options = {
     "main_nav_links": {
         "En pratique": "usage",
         "Modèles": "models",
-        "Disponibilité": "status",
         "Décodage Grib": "grib_defs",
     },
     "extra_header_link_icons": {

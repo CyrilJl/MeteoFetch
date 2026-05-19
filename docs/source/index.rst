@@ -33,5 +33,4 @@ vagues) de Météo France, ainsi que les modèles IFS et AIFS de l'ECMWF.
    
    usage
    models
-   status
    grib_defs
