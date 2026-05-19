@@ -254,8 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function checkUrl(url) {
         try {
-            const response = await fetch(url, { method: 'HEAD' });
-            return response.ok;
+            const response = await fetch(`https://api.allorigins.win/head?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            return data.status === 200;
         } catch {
             return false;
         }
