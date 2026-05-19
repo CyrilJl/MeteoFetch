@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arpege01': {
             name: 'Arpege 0.1°',
             containerId: 'status-arpege01',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/01/{paquet}/arpege__01__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arpege/01/{paquet}/arpege__01__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 6,
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'IP1', 'IP2', 'IP3', 'IP4', 'HP1', 'HP2'],
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arpege025': {
             name: 'Arpege 0.25°',
             containerId: 'status-arpege025',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arpege/025/{paquet}/arpege__025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 6,
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'IP1', 'IP2', 'IP3', 'IP4', 'HP1', 'HP2'],
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome001': {
             name: 'Arome 0.01°',
             containerId: 'status-arome001',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome/001/{paquet}/arome__001__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome/001/{paquet}/arome__001__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ['SP1', 'SP2', 'SP3', 'HP1'],
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome0025': {
             name: 'Arome 0.025°',
             containerId: 'status-arome0025',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome/0025/{paquet}/arome__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome/0025/{paquet}/arome__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome-om-antilles': {
             name: 'Arome Outre-Mer Antilles',
             containerId: 'status-arome-om-antilles',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome-om/ANTIL/0025/{paquet}/arome-om-ANTIL__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome-om/ANTIL/0025/{paquet}/arome-om-ANTIL__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome-om-guyane': {
             name: 'Arome Outre-Mer Guyane',
             containerId: 'status-arome-om-guyane',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome-om/GUYANE/0025/{paquet}/arome-om-GUYANE__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome-om/GUYANE/0025/{paquet}/arome-om-GUYANE__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome-om-indien': {
             name: 'Arome Outre-Mer Indien',
             containerId: 'status-arome-om-indien',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome-om/INDIEN/0025/{paquet}/arome-om-INDIEN__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome-om/INDIEN/0025/{paquet}/arome-om-INDIEN__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome-om-nouvelle-caledonie': {
             name: 'Arome Outre-Mer Nouvelle-Calédonie',
             containerId: 'status-arome-om-nouvelle-caledonie',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome-om/NCALED/0025/{paquet}/arome-om-NCALED__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome-om/NCALED/0025/{paquet}/arome-om-NCALED__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'arome-om-polynesie': {
             name: 'Arome Outre-Mer Polynésie',
             containerId: 'status-arome-om-polynesie',
-            baseUrl: 'https://object.data.gouv.fr/meteofrance-pnt/pnt/{date}:00:00Z/arome-om/POLYN/0025/{paquet}/arome-om-POLYN__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/arome-om/POLYN/0025/{paquet}/arome-om-POLYN__0025__{paquet}__{group}__{date}:00:00Z.grib2',
             freqUpdate: 3,
             pastRuns: 4,
             paquets: ["SP1", "SP2", "SP3", "IP1", "IP2", "IP3", "IP4", "IP5", "HP1", "HP2", "HP3"],
@@ -207,6 +207,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
                 const groups = getAromeOMGroups.call(this, paquet);
                 return groups.map(group => {
+                    return this.baseUrl
+                        .replace(/{date}/g, dateStr)
+                        .replace(/{paquet}/g, paquet)
+                        .replace(/{group}/g, group);
+                });
+            }
+        },
+        'mfwam0025': {
+            name: 'MFWAM 0.025°',
+            containerId: 'status-mfwam0025',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/vague-surcote/MFWAM/0025/{paquet}/vague-surcote-MFWAM__0025__{paquet}__{group}__{date}:00:00Z.grib2',
+            freqUpdate: 6,
+            pastRuns: 4,
+            paquets: ["SP1"],
+            groups: Array.from({ length: 48 }, (_, i) => `${String(i + 1).padStart(3, '0')}H`),
+            getUrls: function (date, paquet) {
+                const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
+                return this.groups.map(group => {
+                    return this.baseUrl
+                        .replace(/{date}/g, dateStr)
+                        .replace(/{paquet}/g, paquet)
+                        .replace(/{group}/g, group);
+                });
+            }
+        },
+        'mfwam01': {
+            name: 'MFWAM 0.1°',
+            containerId: 'status-mfwam01',
+            baseUrl: 'https://meteofrance-pnt.s3.rbx.io.cloud.ovh.net/pnt/{date}:00:00Z/vague-surcote/MFWAM/01/{paquet}/vague-surcote-MFWAM__01__{paquet}__{group}__{date}:00:00Z.grib2',
+            freqUpdate: 6,
+            pastRuns: 4,
+            paquets: ["SP1"],
+            groups: Array.from({ length: 48 }, (_, i) => `${String(i + 1).padStart(3, '0')}H`),
+            getUrls: function (date, paquet) {
+                const dateStr = `${date.toISOString().slice(0, 10)}T${String(date.getUTCHours()).padStart(2, '0')}`;
+                return this.groups.map(group => {
                     return this.baseUrl
                         .replace(/{date}/g, dateStr)
                         .replace(/{paquet}/g, paquet)

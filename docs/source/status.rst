@@ -150,6 +150,23 @@ Arome Outre-Mer Polynésie
 
     <div id="status-arome-om-polynesie"></div>
 
+MFWAM
+~~~~~
+
+MFWAM 0.025°
+++++++++++++
+
+.. raw:: html
+
+    <div id="status-mfwam0025"></div>
+
+MFWAM 0.1°
+++++++++++
+
+.. raw:: html
+
+    <div id="status-mfwam01"></div>
+
 .. raw:: html
 
     <script src="_static/js/status.js"></script>
