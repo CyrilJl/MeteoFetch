@@ -1,3 +1,7 @@
+"""
+Tests fonctionnels pour les modèles meteofetch.
+"""
+
 from gc import collect
 
 import pytest
@@ -22,7 +26,7 @@ from meteofetch import (
 
 set_test_mode()
 
-MODELS = (
+_METEOFRANCE_MODELS = (
     Arome001,
     Arome0025,
     AromeOutreMerAntilles,
@@ -36,28 +40,27 @@ MODELS = (
     MFWAM01,
 )
 
-# Limiter le nombre de groupes pour tous les modèles
-for m in MODELS + (Ifs, Aifs):
-    m.groups_ = m.groups_[:2]
+def _limit_model_groups(monkeypatch, model, n_groups: int = 2):
+    """Temporarily limit a model to the first *n_groups* groups for one test."""
+    monkeypatch.setattr(model, "groups_", model.groups_[:n_groups])
+    return model
 
-# Liste des configurations GRIB à tester
 GRIB_DEFS = ["eccodes", "meteofrance"]
 
 
-# Fixture pour les modèles
-@pytest.fixture(params=MODELS)
-def model(request):
-    return request.param
+@pytest.fixture(params=_METEOFRANCE_MODELS, ids=[m.__name__ for m in _METEOFRANCE_MODELS])
+def mf_model(request, monkeypatch):
+    return _limit_model_groups(monkeypatch, request.param)
 
 
-# Fixture pour les configurations GRIB
 @pytest.fixture(params=GRIB_DEFS)
 def grib_def(request):
     return request.param
 
 
-def test_aifs():
-    datasets = Aifs.get_latest_forecast()
+def test_aifs(monkeypatch):
+    model = _limit_model_groups(monkeypatch, Aifs)
+    datasets = model.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
@@ -68,8 +71,9 @@ def test_aifs():
     collect()
 
 
-def test_ifs():
-    datasets = Ifs.get_latest_forecast()
+def test_ifs(monkeypatch):
+    model = _limit_model_groups(monkeypatch, Ifs)
+    datasets = model.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
@@ -80,15 +84,14 @@ def test_ifs():
     collect()
 
 
-def test_meteo_france_models_with_grib_defs(grib_def, model):
-    # Configurer les définitions GRIB
+def test_meteo_france_models_with_grib_defs(grib_def, mf_model):
     set_grib_defs(grib_def)
-    print(f"\nTesting {model.__name__} with {grib_def} definitions")
-    print(model.availability())
+    print(f"\nTesting {mf_model.__name__} with {grib_def} definitions")
+    print(mf_model.availability())
 
-    for paquet in model.paquets_:
-        print(f"\nModel: {model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
-        datasets = model.get_latest_forecast(paquet=paquet)
+    for paquet in mf_model.paquets_:
+        print(f"\nModel: {mf_model.__name__}, GRIB defs: {grib_def}, Paquet: {paquet}")
+        datasets = mf_model.get_latest_forecast(paquet=paquet)
         assert len(datasets) > 0, f"{paquet} : aucun dataset n'a été récupéré."
 
         for field in datasets:
