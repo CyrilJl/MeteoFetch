@@ -40,31 +40,17 @@ _METEOFRANCE_MODELS = (
     MFWAM01,
 )
 
-_ECMWF_MODELS = (Ifs, Aifs)
-_ALL_MODELS = _METEOFRANCE_MODELS + _ECMWF_MODELS
-
-# FIX: au lieu de muter les classes originales, on crée des sous-classes
-# locales avec groups_ tronqué. Les classes originales restent intactes.
-def _make_limited(cls, n_groups: int = 2):
-    """Return a subclass of *cls* with groups_ limited to the first *n_groups* entries."""
-    return type(
-        f"{cls.__name__}Limited",
-        (cls,),
-        {"groups_": cls.groups_[:n_groups]},
-    )
-
-
-# Variantes limitées pour les tests (2 groupes au lieu de tous)
-_LIMITED_MF_MODELS = [_make_limited(m) for m in _METEOFRANCE_MODELS]
-_LIMITED_IFS = _make_limited(Ifs)
-_LIMITED_AIFS = _make_limited(Aifs)
+def _limit_model_groups(monkeypatch, model, n_groups: int = 2):
+    """Temporarily limit a model to the first *n_groups* groups for one test."""
+    monkeypatch.setattr(model, "groups_", model.groups_[:n_groups])
+    return model
 
 GRIB_DEFS = ["eccodes", "meteofrance"]
 
 
-@pytest.fixture(params=_LIMITED_MF_MODELS, ids=[m.__name__ for m in _METEOFRANCE_MODELS])
-def mf_model(request):
-    return request.param
+@pytest.fixture(params=_METEOFRANCE_MODELS, ids=[m.__name__ for m in _METEOFRANCE_MODELS])
+def mf_model(request, monkeypatch):
+    return _limit_model_groups(monkeypatch, request.param)
 
 
 @pytest.fixture(params=GRIB_DEFS)
@@ -72,8 +58,9 @@ def grib_def(request):
     return request.param
 
 
-def test_aifs():
-    datasets = _LIMITED_AIFS.get_latest_forecast()
+def test_aifs(monkeypatch):
+    model = _limit_model_groups(monkeypatch, Aifs)
+    datasets = model.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
@@ -84,8 +71,9 @@ def test_aifs():
     collect()
 
 
-def test_ifs():
-    datasets = _LIMITED_IFS.get_latest_forecast()
+def test_ifs(monkeypatch):
+    model = _limit_model_groups(monkeypatch, Ifs)
+    datasets = model.get_latest_forecast()
     for field in datasets:
         print(f"\t{field} - {datasets[field].units}")
         ds = datasets[field]
