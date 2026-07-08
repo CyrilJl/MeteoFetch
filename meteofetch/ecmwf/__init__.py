@@ -205,9 +205,7 @@ class ECMWF(Model):
             )
             if ret:
                 return ret
-        raise ForecastNotAvailableError(
-            f"No valid {cls.__name__} run found among the last {cls.past_runs_} runs."
-        )
+        raise ForecastNotAvailableError(f"No valid {cls.__name__} run found among the last {cls.past_runs_} runs.")
 
     @classmethod
     def availability(cls, return_date: bool = False) -> pd.Series:

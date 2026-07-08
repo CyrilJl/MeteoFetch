@@ -9,7 +9,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Literal, Union
 
-import eccodes
 import requests
 import xarray as xr
 
@@ -115,7 +114,14 @@ def set_grib_defs(source: Literal["eccodes", "meteofrance"]) -> None:
             assert isinstance(required_path, str)
             os.environ["ECCODES_DEFINITION_PATH"] = required_path
         print(f"Définitions GRIB mises à jour : {source}")
-        eccodes.codes_context_delete()
+        # NB : on ne réinitialise volontairement pas le contexte eccodes du
+        # processus parent. La lecture des GRIBs a lieu dans des processus
+        # enfants (multiprocessing.Pool) qui lisent ECCODES_DEFINITION_PATH à
+        # leur initialisation, donc le changement de définitions y est bien pris
+        # en compte. Appeler eccodes.codes_context_delete() ici est inutile et
+        # provoque un crash de l'interpréteur (SIGABRT/segfault, non rattrapable)
+        # selon la version d'eccodes, notamment lors d'un changement de
+        # définitions après des lectures GRIB.
 
 
 def set_test_mode() -> None:
