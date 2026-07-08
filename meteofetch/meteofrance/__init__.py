@@ -160,7 +160,9 @@ class MeteoFrance(Model):
         index, ret = [], []
         for date in cls._iter_run_dates():
             index.append(date)
-            ret.append(are_downloadable(cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}"), return_date=return_date))
+            ret.append(
+                are_downloadable(cls._get_urls(paquet=paquet, date=f"{date:%Y-%m-%dT%H}"), return_date=return_date)
+            )
         return pd.Series(ret, index=index, name=paquet)
 
     @classmethod

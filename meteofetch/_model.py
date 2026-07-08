@@ -63,13 +63,17 @@ class Model:
                 return temp_path
             except (requests.exceptions.RequestException, OSError) as e:
                 if attempt < num_retries:
-                    logger.warning("Download attempt %d/%d failed for %s: %s — retrying", attempt + 1, num_retries + 1, url, e)
+                    logger.warning(
+                        "Download attempt %d/%d failed for %s: %s — retrying", attempt + 1, num_retries + 1, url, e
+                    )
                 else:
                     logger.error("All %d download attempt(s) failed for %s: %s", num_retries + 1, url, e)
         return False
 
     @classmethod
-    def _download_urls(cls, urls: List[str], path: str, num_workers: int, num_retries: int = 1) -> List[Union[Path, bool]]:
+    def _download_urls(
+        cls, urls: List[str], path: str, num_workers: int, num_retries: int = 1
+    ) -> List[Union[Path, bool]]:
         """Download a list of URLs in parallel and return their local paths.
 
         Args:
