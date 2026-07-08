@@ -116,14 +116,15 @@ def test_ecmwf_models(ecmwf_model):
     collect()
 
 
-def test_meteo_france_models_with_grib_defs(grib_def, mf_model):
+def test_meteo_france_models_with_grib_defs(grib_def, mf_model, full_mode):
     set_grib_defs(grib_def)
-    # Un seul paquet représentatif suffit à valider le pipeline sans télécharger
-    # tous les paquets de chaque modèle.
-    paquet = mf_model.paquets_[0]
-    print(f"\nTesting {mf_model.__name__} with {grib_def} definitions, paquet {paquet}")
+    # Par défaut (PR), un seul paquet représentatif suffit à valider le pipeline.
+    # Avec ``--full`` (lancement manuel), tous les paquets sont testés.
+    paquets = mf_model.paquets_ if full_mode else mf_model.paquets_[:1]
 
-    datasets = mf_model.get_latest_forecast(paquet=paquet)
-    _check_datasets(datasets, f"{mf_model.__name__}/{grib_def}/{paquet}")
-    del datasets
-    collect()
+    for paquet in paquets:
+        print(f"\nTesting {mf_model.__name__} with {grib_def} definitions, paquet {paquet}")
+        datasets = mf_model.get_latest_forecast(paquet=paquet)
+        _check_datasets(datasets, f"{mf_model.__name__}/{grib_def}/{paquet}")
+        del datasets
+        collect()
