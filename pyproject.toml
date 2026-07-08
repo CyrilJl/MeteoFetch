@@ -27,6 +27,11 @@ test = ["pytest"]
 "Homepage" = "https://github.com/CyrilJl/meteofetch"
 "Documentation" = "https://meteofetch.readthedocs.io"
 
+[tool.pytest.ini_options]
+markers = [
+    "availability: tests qui ne sondent que la disponibilité distante (requêtes HEAD, pas de téléchargement).",
+]
+
 [tool.ruff]
 line-length = 120
 fix = true
