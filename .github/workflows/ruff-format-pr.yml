@@ -8,9 +8,16 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.head_ref }}
+          # Pousser le commit de reformatage avec un PAT (secret CI_PAT) plutôt
+          # qu'avec le GITHUB_TOKEN : un push authentifié par le GITHUB_TOKEN ne
+          # re-déclenche AUCUN workflow, ce qui laisserait les checks `test`
+          # absents du commit final et bloquerait le merge. Avec un PAT, le push
+          # relance la CI. Repli sur github.token si le secret n'est pas défini
+          # (ex. PR issue d'un fork, qui n'a pas accès aux secrets).
+          token: ${{ secrets.CI_PAT || github.token }}
 
       - name: Install Ruff
         run: pip install ruff

@@ -2,21 +2,39 @@ name: Run Pytest
 
 on:
   workflow_dispatch:
+    inputs:
+      full:
+        description: "Suite complète (tous les paquets de chaque modèle) — potentiellement très long"
+        type: boolean
+        default: true
+  pull_request:
+    branches: [main]
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    # La suite complète (`--full`, lancement manuel) télécharge tous les paquets
+    # de chaque modèle sur les deux jeux de définitions GRIB : elle dépasse
+    # largement 30 min. La suite partielle des PR reste bornée à 30 min.
+    timeout-minutes: ${{ (github.event_name == 'workflow_dispatch' && inputs.full) && 120 || 30 }}
+    defaults:
+      run:
+        # Force bash (dispo via Git Bash sur windows-latest) pour un comportement
+        # identique sur les trois OS (notamment `pip install -e .[test]` et la
+        # sélection conditionnelle de `--full`).
+        shell: bash
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.12']
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -25,6 +43,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e .[test]
 
+    # Sur une PR : suite partielle (obligatoire). En lancement manuel avec
+    # l'option "full" : suite exhaustive sur tous les paquets.
     - name: Run Pytest
       run: |
-        pytest tests -vv -s
+        pytest tests -vv -s ${{ (github.event_name == 'workflow_dispatch' && inputs.full) && '--full' || '' }}

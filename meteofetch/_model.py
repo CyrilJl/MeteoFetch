@@ -1,16 +1,15 @@
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
-from glob import glob
+from contextlib import ExitStack
 from multiprocessing import Pool
 from os.path import basename, getsize
 from pathlib import Path
 from platform import system
+from re import sub
 from shutil import copyfileobj
-from subprocess import CalledProcessError, run
 from typing import Dict, List, Union
 
-import cfgrib
 import pandas as pd
 import requests
 import xarray as xr
@@ -18,6 +17,12 @@ import xarray as xr
 from ._misc import geo_encode_cf
 
 logger = logging.getLogger(__name__)
+
+
+def _import_cfgrib():
+    import cfgrib
+
+    return cfgrib
 
 
 class Model:
@@ -63,13 +68,17 @@ class Model:
                 return temp_path
             except (requests.exceptions.RequestException, OSError) as e:
                 if attempt < num_retries:
-                    logger.warning("Download attempt %d/%d failed for %s: %s — retrying", attempt + 1, num_retries + 1, url, e)
+                    logger.warning(
+                        "Download attempt %d/%d failed for %s: %s — retrying", attempt + 1, num_retries + 1, url, e
+                    )
                 else:
                     logger.error("All %d download attempt(s) failed for %s: %s", num_retries + 1, url, e)
         return False
 
     @classmethod
-    def _download_urls(cls, urls: List[str], path: str, num_workers: int, num_retries: int = 1) -> List[Union[Path, bool]]:
+    def _download_urls(
+        cls, urls: List[str], path: str, num_workers: int, num_retries: int = 1
+    ) -> List[Union[Path, bool]]:
         """Download a list of URLs in parallel and return their local paths.
 
         Args:
@@ -90,27 +99,54 @@ class Model:
         """Open a GRIB2 file and return a list of datasets (one per variable group).
 
         On Windows, cfgrib cannot handle files larger than 2 GB. In that case the
-        file is first split into per-variable files using ``grib_copy``, then each
-        split file is opened individually.
+        file is first split into per-variable files with the ecCodes Python API,
+        then each split file is opened individually.
         """
+        cfgrib = _import_cfgrib()
         kw = dict(backend_kwargs={"decode_timedelta": True, "indexpath": ""}, cache=False)
         if system() == "Windows" and getsize(path) >= 2**31:
             file_name = basename(path).split(".")[0]
-            path_split = Path(path).parent / f"split_{file_name}_[shortName].grib2"
-            command = f"grib_copy {path} {path_split.resolve()}"
-            try:
-                run(command, check=True)
-                Path(path).unlink()
-                paths = glob(str(Path(path).parent / f"split_{file_name}_*.grib2"))
-                datasets = []
-                for path_variable in paths:
-                    datasets.append(cfgrib.open_dataset(path=path_variable, **kw))
-                return datasets
-            except CalledProcessError:
-                raise
+            paths = cls._split_grib_by_short_name(path, file_name)
+            Path(path).unlink()
+            datasets = []
+            for path_variable in paths:
+                datasets.append(cfgrib.open_dataset(path=path_variable, **kw))
+            return datasets
         else:
             # Cas le plus courant
             return cfgrib.open_datasets(path=path, **kw)
+
+    @staticmethod
+    def _split_grib_by_short_name(path, file_name: str) -> List[Path]:
+        """Split a GRIB file into one file per ecCodes ``shortName``."""
+        import eccodes
+
+        split_dir = Path(path).parent
+        paths_by_short_name: Dict[str, Path] = {}
+
+        with open(path, "rb") as source, ExitStack() as stack:
+            files = {}
+            while True:
+                message = eccodes.codes_grib_new_from_file(source)
+                if message is None:
+                    break
+
+                try:
+                    short_name = str(eccodes.codes_get(message, "shortName"))
+                    safe_short_name = sub(r"[^A-Za-z0-9_.-]+", "_", short_name).strip("._")
+                    if not safe_short_name:
+                        safe_short_name = "unknown"
+
+                    if safe_short_name not in files:
+                        split_path = split_dir / f"split_{file_name}_{safe_short_name}.grib2"
+                        paths_by_short_name[safe_short_name] = split_path
+                        files[safe_short_name] = stack.enter_context(open(split_path, "wb"))
+
+                    eccodes.codes_write(message, files[safe_short_name])
+                finally:
+                    eccodes.codes_release(message)
+
+        return list(paths_by_short_name.values())
 
     @classmethod
     def _read_multiple_gribs(cls, paths, variables, num_workers) -> Dict[str, xr.DataArray]:
