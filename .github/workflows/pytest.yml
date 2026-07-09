@@ -13,11 +13,20 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    # La suite complète (`--full`, lancement manuel) télécharge tous les paquets
+    # de chaque modèle sur les deux jeux de définitions GRIB : elle dépasse
+    # largement 30 min. La suite partielle des PR reste bornée à 30 min.
+    timeout-minutes: ${{ (github.event_name == 'workflow_dispatch' && inputs.full) && 120 || 30 }}
+    defaults:
+      run:
+        # Force bash (dispo via Git Bash sur windows-latest) pour un comportement
+        # identique sur les trois OS (notamment `pip install -e .[test]` et la
+        # sélection conditionnelle de `--full`).
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.12']
 
     steps:
