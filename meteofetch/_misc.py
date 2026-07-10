@@ -61,18 +61,19 @@ CRS_WKT = """
 
 def geo_encode_cf(da: xr.DataArray) -> xr.DataArray:
     """
-    Rend une DataArray conforme aux conventions CF (Climate and Forecast).
+    Retourne une copie de la DataArray conforme aux conventions CF (Climate and Forecast).
 
     Cette fonction ajoute les attributs et encodages nécessaires pour que la DataArray
     soit compatible avec les outils respectant les conventions CF. Elle inclut la compression,
     les informations de référence spatiale, et les coordonnées géographiques.
 
     Args:
-        da (xr.DataArray): La DataArray à modifier pour la rendre conforme aux conventions CF.
+        da (xr.DataArray): La DataArray source.
 
     Returns:
-        xr.DataArray: La DataArray modifiée avec les attributs et encodages CF ajoutés.
+        xr.DataArray: Une copie de la DataArray avec les attributs et encodages CF ajoutés.
     """
+    da = da.copy(deep=False)
     da.encoding.update(
         {
             "zlib": True,
@@ -133,7 +134,7 @@ def set_test_mode() -> None:
     downloading or storing real meteorological data.
     """
     os.environ["METEOFETCH_TEST_MODE"] = "1"
-    print("Test mode enabled. DataArray values are replaced with isnull() booleans.")
+    logger.info("Test mode enabled. DataArray values are replaced with isnull() booleans.")
 
 
 def is_downloadable(url: str, return_date: bool = False) -> Union[bool, datetime]:
